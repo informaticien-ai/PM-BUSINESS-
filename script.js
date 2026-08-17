@@ -1,70 +1,40 @@
-/**
- * Gère la navigation du menu du bas (Footer)
- */
-function navTo(destination, element) {
-    // 1. Mettre à jour l'apparence des boutons du footer
-    document.querySelectorAll('.foot-link').forEach(link => link.classList.remove('active'));
-    element.classList.add('active');
-
-    // 2. Récupérer les éléments de navigation du haut
+// Navigation du footer (Accueil, Message, À propos)
+function navTo(dest, el) {
+    document.querySelectorAll('.foot-link').forEach(l => l.classList.remove('active'));
+    el.classList.add('active');
+    
     const mainHeader = document.getElementById('main-header');
     const topNav = document.getElementById('top-nav');
-    const searchBox = document.getElementById('search-box');
 
-    // 3. Logique de changement de page
-    if (destination === 'message') {
-        // Mode Message : On cache tout le haut
+    if(dest === 'message') {
         mainHeader.style.display = 'none';
         topNav.style.display = 'none';
         showPage('message-page');
-    } 
-    else if (destination === 'propos') {
-        // Mode À propos : Header simple, pas d'onglets ni recherche
-        mainHeader.style.display = 'flex';
+    } else if(dest === 'propos') {
+        mainHeader.style.display = 'none';
         topNav.style.display = 'none';
-        searchBox.style.display = 'none';
         showPage('propos-page');
-    } 
-    else {
-        // Mode Accueil : On réaffiche tout
+    } else {
         mainHeader.style.display = 'flex';
         topNav.style.display = 'flex';
-        searchBox.style.display = 'block';
-        showPage('articles'); // Revient aux articles par défaut
-        
-        // Reset des onglets du haut
-        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-        document.querySelector('.nav-link').classList.add('active');
+        showPage('articles'); // Revient sur articles par défaut
     }
 }
 
-/**
- * Gère les onglets du haut (Articles, Fournisseurs, Catégories)
- */
-function showTab(tabId, element) {
-    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-    element.classList.add('active');
+// Navigation des onglets du haut (Articles, Fournisseur, Catégories)
+function showTab(tabId, el) {
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    el.classList.add('active');
     showPage(tabId);
 }
 
-/**
- * Fonction interne pour afficher une section spécifique
- */
+// Fonction pour afficher une page et cacher les autres
 function showPage(id) {
-    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-    const target = document.getElementById(id);
-    if (target) {
-        target.classList.add('active');
-    }
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
 }
 
-/**
- * Simulation de paiement Airtel Money
- */
-function initierPaiement(montant) {
-    const confirmation = confirm("Voulez-vous payer " + montant + " FC via Airtel Money ?");
-    if (confirmation) {
-        alert("Demande de paiement envoyée sur votre téléphone...\nVeuillez saisir votre code PIN Airtel Money.");
-        // Ici, vous pourriez intégrer l'API de MaishaPay ou FlexPay RDC
-    }
-      }
+// Fonction de paiement Airtel Money
+function payer(montant) {
+    alert("Redirection Airtel Money...\nMontant : " + montant + " FC\nVeuillez confirmer sur votre téléphone.");
+}
