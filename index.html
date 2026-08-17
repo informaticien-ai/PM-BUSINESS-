@@ -3,122 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PM BUSINESS</title>
+    <title>PM BUSINESS - Super App</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- HEADER PRINCIPAL -->
-    <header id="main-header">
-        <div class="header-left">
-            <img src="logo.png" alt="Logo" class="app-logo">
-            <div class="brand-name">PM <span>BUSINESS</span></div>
-        </div>
-        <div class="search-container" id="search-box">
-            <input type="text" class="search-bar" placeholder="Recherche un produit...">
+    <!-- HEADER ACCUEIL -->
+    <header id="header-accueil" class="header-main">
+        <div class="brand-name">PM <span>BUSINESS</span></div>
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="🔍 Recherche un produit...">
         </div>
     </header>
 
-    <!-- NAVIGATION ONGLETS -->
-    <nav id="top-nav">
-        <a href="javascript:void(0)" class="nav-link active" onclick="showTab('articles', this)">Articles</a>
-        <a href="javascript:void(0)" class="nav-link" onclick="showTab('fournisseurs', this)">Fournisseur</a>
-        <a href="javascript:void(0)" class="nav-link" onclick="showTab('categories', this)">Catégorie</a>
-    </nav>
+    <!-- HEADER SIMPLE -->
+    <header id="header-simple" class="header-simple" style="display: none;">
+        <div class="logo-sq">PM</div>
+        <div class="brand-name-simple">PM BUSINESS</div>
+    </header>
 
-    <!-- PAGE ARTICLES (3 COLONNES) -->
-    <main id="articles" class="page active pt-accueil">
-        <div class="grid-3">
-            <div class="card-art"><div class="img-placeholder"></div><p class="price-tag">25.000 FC</p><button class="btn-pay" onclick="payer('25000')">Airtel Money</button></div>
-            <div class="card-art"><div class="img-placeholder"></div><p class="price-tag">15.000 FC</p><button class="btn-pay" onclick="payer('15000')">Airtel Money</button></div>
-            <div class="card-art"><div class="img-placeholder"></div><p class="price-tag">40.000 FC</p><button class="btn-pay" onclick="payer('40000')">Airtel Money</button></div>
-            <div class="card-art"><div class="img-placeholder"></div><p class="price-tag">12.000 FC</p><button class="btn-pay" onclick="payer('12000')">Airtel Money</button></div>
-            <div class="card-art"><div class="img-placeholder"></div><p class="price-tag">30.000 FC</p><button class="btn-pay" onclick="payer('30000')">Airtel Money</button></div>
-            <div class="card-art"><div class="img-placeholder"></div><p class="price-tag">18.000 FC</p><button class="btn-pay" onclick="payer('18000')">Airtel Money</button></div>
-        </div>
-    </main>
+    <!-- HEADER MESSAGE -->
+    <header id="header-grand" class="header-grand" style="display: none;">
+        <img src="logo.png" alt="Logo" class="logo-large-img">
+        <div class="brand-name-grand">PM BUSINESS</div>
+    </header>
 
-    <!-- PAGE FOURNISSEURS -->
-    <main id="fournisseurs" class="page pt-accueil">
-        <div class="f-list">
-            <div class="f-card">
-                <div class="f-photo"></div>
-                <div class="f-info"><h4>KASONGO Patrick</h4><p>📞 +243 812 345 678</p><p>📍 RDC, Kinshasa</p></div>
+    <!-- NAVIGATION ACCUEIL -->
+    <div id="accueil-nav-container">
+        <div class="separator"></div>
+        <nav class="nav-tabs">
+            <a href="javascript:void(0)" class="tab-link active" onclick="switchTab('accueil-content', this)">Articles</a>
+            <a href="javascript:void(0)" class="tab-link" onclick="switchTab('fournisseurs', this)">Fournisseur</a>
+            <a href="javascript:void(0)" class="tab-link" onclick="switchTab('categories', this)">Catégories</a>
+        </nav>
+    </div>
+
+    <!-- ================= PAGES ================= -->
+
+    <!-- PAGE ACCUEIL -->
+    <main id="page-accueil" class="page active">
+        <div class="content-scroll">
+            <div id="accueil-content" class="tab-content active">
+                <div class="products-grid-2">
+                    <div class="product-card-2"><img><h3>Produit 1</h3><p>15.000 FC</p></div>
+                    <div class="product-card-2"><img><h3>Produit 2</h3><p>25.000 FC</p></div>
+                    <div class="product-card-2"><img><h3>Produit 3</h3><p>8.500 FC</p></div>
+                    <div class="product-card-2"><img><h3>Produit 4</h3><p>120.000 FC</p></div>
+                    <div class="product-card-2"><img><h3>Produit 5</h3><p>45.000 FC</p></div>
+                    <div class="product-card-2"><img><h3>Produit 6</h3><p>3.000 FC</p></div>
+                </div>
             </div>
-            <div class="f-card">
-                <div class="f-photo"></div>
-                <div class="f-info"><h4>MUKENDI Grâce</h4><p>📞 +243 900 123 456</p><p>📍 RDC, Lubumbashi</p></div>
-            </div>
-        </div>
-    </main>
 
-    <!-- PAGE CATEGORIES -->
-    <main id="categories" class="page pt-accueil">
-        <div class="cat-container">
-            <aside class="cat-sidebar">
-                <div class="cat-item active">Vêtements Femme</div>
-                <div class="cat-item">Vêtements Homme</div>
-                <div class="cat-item">Bijoux</div>
-                <div class="cat-item">Chaussures</div>
-            </aside>
-            <section style="flex:1; padding:10px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                <div class="card-art"><div class="img-placeholder"></div><p class="price-tag">25.000 FC</p></div>
-                <div class="card-art"><div class="img-placeholder"></div><p class="price-tag">15.000 FC</p></div>
-            </section>
+            <div id="fournisseurs" class="tab-content">
+                <h2 class="titre-page">fournisseurs</h2>
+                <div class="fournisseur-list">
+                    <div class="fournisseur-card">
+                        <div class="fournisseur-photo">Photo</div>
+                        <div class="fournisseur-info">
+                            <p class="nom-complet">KASONGO</p>
+                            <p><strong>Post-nom:</strong> Tshibanda</p>
+                            <p><strong>Prénom:</strong> Patrick</p>
+                            <p><strong>Téléphone:</strong> +243 812 345 678</p>
+                            <p><strong>Email:</strong> patrick@gmail.com</p>
+                            <p><strong>Pays:</strong> RDC</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="categories" class="tab-content">
+                <div class="cat-split">
+                    <aside class="sidebar-categories">
+                        <h2>Pour vous</h2>
+                        <div class="category-item active">Vêtements Femme</div>
+                        <div class="category-item">Vêtements Homme</div>
+                    </aside>
+                    <section class="articles-area">
+                        <div class="products-grid-2">
+                            <div class="product-card-2"><img><h3>Robe Chic</h3><p>25.000 FC</p></div>
+                        </div>
+                    </section>
+                </div>
+            </div>
         </div>
     </main>
 
     <!-- PAGE MESSAGE -->
-    <main id="message-page" class="page">
-        <div class="header-grand">
-            <img src="logo.png" alt="Logo" class="logo-grand-img">
-            <h1 class="brand-name-grand">PM BUSINESS</h1>
-        </div>
-        <div class="msg-content">
+    <main id="page-message" class="page">
+        <div class="msg-body">
             <h2 class="titre-message">message</h2>
-            <p class="msg-question">Comment souhaitez-vous discuter avec un fournisseur ?</p>
-            <a href="https://wa.me/243812345678" class="btn-choix btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Par WhatsApp</a>
-            <a href="#" class="btn-choix btn-site"><i class="fa-solid fa-comments"></i> Toujours sur le site</a>
+            <p class="question">Comment souhaitez-vous discuter<br>avec un fournisseur ?</p>
+            <div class="choix-discussion">
+                <a href="https://wa.me/243000" class="btn-choix btn-whatsapp"><i class="fa-brands fa-whatsapp"></i><span>Par WhatsApp</span></a>
+                <a href="#" class="btn-choix btn-site"><i class="fa-solid fa-comments"></i><span>Toujours sur le site</span></a>
+            </div>
         </div>
     </main>
 
-    <!-- PAGE A PROPOS -->
-    <main id="propos-page" class="page">
-        <header class="header-simple">
-            <img src="logo.png" alt="Logo" class="logo-sq">
-            <div class="brand-name">PM BUSINESS</div>
-        </header>
-        <div class="about-content">
+    <!-- PAGE A PROPOS (REMIS EXACTEMENT SELON TON CODE) -->
+    <main id="page-propos" class="page">
+        <div class="content-propos">
             <h2 class="titre-page-ap">à propos</h2>
+            
             <div class="about-card">
                 <h3><i class="fa-solid fa-store"></i> Qui sommes-nous ?</h3>
-                <p>PM BUSINESS est votre boutique de mode en ligne n°1 au Congo.</p>
+                <p>PM BUSINESS est votre boutique de mode en ligne n°1 au Congo. Nous sélectionnons pour vous les meilleures tendances de vêtements pour toute la famille, à des prix abordables et avec une livraison rapide.</p>
             </div>
+
+            <div class="about-card">
+                <h3><i class="fa-solid fa-bullseye"></i> Notre Mission</h3>
+                <p>Rendre le style accessible à tous. Nous voulons que chaque Congolais puisse s'habiller avec élégance, sans se ruiner et en 1 clic.</p>
+            </div>
+
             <div class="about-card">
                 <h3><i class="fa-solid fa-star"></i> Pourquoi nous choisir ?</h3>
                 <div class="valeurs">
                     <div class="valeur-item"><i class="fa-solid fa-check"></i> Qualité</div>
-                    <div class="valeur-item"><i class="fa-solid fa-truck-fast"></i> Livraison</div>
+                    <div class="valeur-item"><i class="fa-solid fa-truck-fast"></i> Livraison Rapide</div>
+                    <div class="valeur-item"><i class="fa-solid fa-tags"></i> Prix Abordables</div>
+                    <div class="valeur-item"><i class="fa-solid fa-headset"></i> Service Client</div>
                 </div>
+            </div>
+
+            <div class="about-card">
+                <h3><i class="fa-solid fa-phone"></i> Nous Contacter</h3>
+                <p><strong>Téléphone:</strong> +243 812 345 678<br>
+                <strong>WhatsApp:</strong> +243 812 345 678<br>
+                <strong>Ville:</strong> Lubumbashi, RDC</p>
             </div>
         </div>
     </main>
 
     <!-- FOOTER -->
     <footer>
-        <a href="javascript:void(0)" class="foot-link active" onclick="navTo('accueil', this)">
+        <a href="javascript:void(0)" class="footer-item active" onclick="navTo('accueil', this)">
             <i class="fa-solid fa-house"></i><span>Accueil</span>
         </a>
-        <a href="javascript:void(0)" class="foot-link" onclick="navTo('message', this)">
+        <a href="javascript:void(0)" class="footer-item" onclick="navTo('message', this)">
             <i class="fa-solid fa-comment-dots"></i><span>Message</span>
         </a>
-        <a href="javascript:void(0)" class="foot-link" onclick="navTo('propos', this)">
+        <a href="javascript:void(0)" class="footer-item" onclick="navTo('propos', this)">
             <i class="fa-solid fa-circle-info"></i><span>À propos</span>
         </a>
     </footer>
 
     <script src="script.js"></script>
 </body>
-</html>
+                    </html>
