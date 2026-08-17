@@ -10,27 +10,27 @@
 </head>
 <body>
 
-    <!-- HEADER 1 : ACCUEIL (Nom à gauche, Recherche à droite) -->
+    <!-- HEADER 1 : ACCUEIL -->
     <header id="header-accueil">
         <div class="brand-name">PM <span>BUSINESS</span></div>
         <div class="search-container">
-            <input type="text" class="search-bar" placeholder="🔍 Recherche un produit...">
+            <input type="text" class="search-bar" placeholder="🔍 Recherche un prod...">
         </div>
     </header>
 
-    <!-- HEADER 2 : SIMPLE (Pour Articles, Fournisseur, Catégories, À propos) -->
+    <!-- HEADER 2 : SIMPLE (Articles, Fournisseur, Catégories, À propos) -->
     <header id="header-simple" style="display: none;">
         <div class="logo-pink">PM</div>
         <div class="brand-name-simple">PM BUSINESS</div>
     </header>
 
-    <!-- HEADER 3 : MESSAGE (Grand Logo Central) -->
+    <!-- HEADER 3 : MESSAGE -->
     <header id="header-message" style="display: none;">
         <div class="logo-grand">PM</div>
         <div class="brand-name-grand">PM BUSINESS</div>
     </header>
 
-    <!-- ONGLET DE NAVIGATION (Uniquement sur l'accueil) -->
+    <!-- NAVIGATION TABS -->
     <nav id="accueil-tabs">
         <div class="separator"></div>
         <div class="nav-tabs">
@@ -88,23 +88,26 @@
             </div>
         </section>
 
-        <!-- PAGE CATEGORIES -->
+        <!-- PAGE CATEGORIES (SCROLLABLE) -->
         <section id="categories-split" class="page">
             <div class="cat-wrapper">
-                <aside class="sidebar">
+                <aside class="sidebar-scroll">
                     <h3>Pour vous</h3>
                     <div class="cat-item active">Vêtements Femme</div>
                     <div class="cat-item">Vêtements Homme</div>
                     <div class="cat-item">Vêtements Enfant</div>
                     <div class="cat-item">Boucles d'oreille</div>
                     <div class="cat-item">Bagues</div>
+                    <div class="cat-item">Chaussures</div>
+                    <div class="cat-item">Sacs</div>
                 </aside>
-                <div class="cat-products">
+                <div class="cat-products-scroll">
                     <div class="products-grid-2">
                         <div class="product-card"><img><h3>Robe Chic</h3><p>25.000 FC</p></div>
                         <div class="product-card"><img><h3>Jean Slim</h3><p>35.000 FC</p></div>
                         <div class="product-card"><img><h3>Boucle Or</h3><p>12.000 FC</p></div>
                         <div class="product-card"><img><h3>Bague Argent</h3><p>8.000 FC</p></div>
+                        <div class="product-card"><img><h3>Sac Luxe</h3><p>55.000 FC</p></div>
                     </div>
                 </div>
             </div>
@@ -114,7 +117,7 @@
         <section id="page-message" class="page">
             <div class="msg-container">
                 <h2 class="titre-msg">message</h2>
-                <p>Comment souhaitez-vous discuter<br>avec un fournisseur ?</p>
+                <p class="msg-txt">Comment souhaitez-vous discuter<br>avec un fournisseur ?</p>
                 <div class="msg-btns">
                     <a href="#" class="btn-wa">Par WhatsApp</a>
                     <a href="#" class="btn-site">Toujours sur le site</a>
