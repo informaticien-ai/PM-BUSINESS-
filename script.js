@@ -1,47 +1,47 @@
-function navTo(pageId, element) {
-    document.querySelectorAll('.footer-item').forEach(item => item.classList.remove('active'));
+// Navigation principale (Footer)
+function navTo(page, element) {
+    // UI Footer
+    document.querySelectorAll('footer a').forEach(a => a.classList.remove('active'));
     element.classList.add('active');
-    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-    
-    const hAccueil = document.getElementById('header-accueil');
-    const hSimple = document.getElementById('header-simple');
-    const hGrand = document.getElementById('header-grand');
-    const navCont = document.getElementById('accueil-nav-container');
 
-    if(pageId === 'accueil') {
-        document.getElementById('page-accueil').classList.add('active');
-        hAccueil.style.display = 'flex';
-        hSimple.style.display = 'none';
-        hGrand.style.display = 'none';
-        navCont.style.display = 'block';
-    } else if(pageId === 'message') {
+    // Visibilité des Headers
+    document.getElementById('header-accueil').style.display = 'none';
+    document.getElementById('header-simple').style.display = 'none';
+    document.getElementById('header-message').style.display = 'none';
+    document.getElementById('accueil-tabs').style.display = 'none';
+
+    // Logique des Pages
+    if (page === 'accueil') {
+        document.getElementById('header-accueil').style.display = 'flex';
+        document.getElementById('accueil-tabs').style.display = 'block';
+        showTab('articles-grid', document.querySelector('.nav-tabs a:first-child'));
+    } else if (page === 'message') {
+        document.getElementById('header-message').style.display = 'block';
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById('page-message').classList.add('active');
-        hAccueil.style.display = 'none';
-        hSimple.style.display = 'none';
-        hGrand.style.display = 'block';
-        navCont.style.display = 'none';
-    } else if(pageId === 'propos') {
+    } else if (page === 'propos') {
+        document.getElementById('header-simple').style.display = 'flex';
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById('page-propos').classList.add('active');
-        hAccueil.style.display = 'none';
-        hSimple.style.display = 'flex';
-        hGrand.style.display = 'none';
-        navCont.style.display = 'none';
     }
 }
 
-function switchTab(tabId, element) {
-    document.querySelectorAll('.tab-link').forEach(link => link.classList.remove('active'));
+// Navigation Onglets (Articles / Fournisseur / Catégories)
+function showTab(id, element) {
+    // UI Tabs
+    document.querySelectorAll('.nav-tabs a').forEach(a => a.classList.remove('active'));
     element.classList.add('active');
-    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
 
-    const hAccueil = document.getElementById('header-accueil');
-    const hSimple = document.getElementById('header-simple');
-    if(tabId === 'accueil-grid') {
-        hAccueil.style.display = 'flex';
-        hSimple.style.display = 'none';
+    // Headers conditionnels
+    if (id === 'articles-grid') {
+        document.getElementById('header-accueil').style.display = 'flex';
+        document.getElementById('header-simple').style.display = 'none';
     } else {
-        hAccueil.style.display = 'none';
-        hSimple.style.display = 'flex';
+        document.getElementById('header-accueil').style.display = 'none';
+        document.getElementById('header-simple').style.display = 'flex';
     }
+
+    // Affichage section
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
 }
