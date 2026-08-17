@@ -3,30 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PM BUSINESS - Super App</title>
+    <title>PM BUSINESS</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- HEADER ACCUEIL -->
+    <!-- HEADERS (Toutes les versions que tu as envoyées) -->
     <header id="header-accueil" class="header-main">
         <div class="brand-name">PM <span>BUSINESS</span></div>
-        <div class="search-container">
-            <input type="text" class="search-bar" placeholder="🔍 Recherche un produit...">
-        </div>
+        <div class="search-container"><input type="text" placeholder="🔍 Recherche un produit..."></div>
     </header>
 
-    <!-- HEADER SIMPLE -->
     <header id="header-simple" class="header-simple" style="display: none;">
         <div class="logo-sq">PM</div>
         <div class="brand-name-simple">PM BUSINESS</div>
     </header>
 
-    <!-- HEADER MESSAGE -->
-    <header id="header-grand" class="header-grand" style="display: none;">
-        <img src="logo.png" alt="Logo" class="logo-large-img">
+    <header id="header-message" class="header-grand" style="display: none;">
+        <div class="logo-grand">PM</div>
         <div class="brand-name-grand">PM BUSINESS</div>
     </header>
 
@@ -34,58 +30,110 @@
     <div id="accueil-nav-container">
         <div class="separator"></div>
         <nav class="nav-tabs">
-            <a href="javascript:void(0)" class="tab-link active" onclick="switchTab('accueil-content', this)">Articles</a>
+            <a href="javascript:void(0)" class="tab-link active" onclick="switchTab('accueil-grid', this)">Articles</a>
+            <a href="javascript:void(0)" class="tab-link" onclick="switchTab('page-articles-liste', this)">Articles Liste</a>
             <a href="javascript:void(0)" class="tab-link" onclick="switchTab('fournisseurs', this)">Fournisseur</a>
             <a href="javascript:void(0)" class="tab-link" onclick="switchTab('categories', this)">Catégories</a>
         </nav>
     </div>
 
-    <!-- ================= PAGES ================= -->
-
-    <!-- PAGE ACCUEIL -->
+    <!-- PAGES -->
     <main id="page-accueil" class="page active">
-        <div class="content-scroll">
-            <div id="accueil-content" class="tab-content active">
-                <div class="products-grid-2">
-                    <div class="product-card-2"><img><h3>Produit 1</h3><p>15.000 FC</p></div>
-                    <div class="product-card-2"><img><h3>Produit 2</h3><p>25.000 FC</p></div>
-                    <div class="product-card-2"><img><h3>Produit 3</h3><p>8.500 FC</p></div>
-                    <div class="product-card-2"><img><h3>Produit 4</h3><p>120.000 FC</p></div>
-                    <div class="product-card-2"><img><h3>Produit 5</h3><p>45.000 FC</p></div>
-                    <div class="product-card-2"><img><h3>Produit 6</h3><p>3.000 FC</p></div>
-                </div>
+        <!-- ACCUEIL SIMPLE (Grille 2 col) -->
+        <div id="accueil-grid" class="tab-content active" style="padding: 140px 15px 100px;">
+            <div class="products-grid-2">
+                <div class="product-card-2"><img><h3>Produit 1</h3><p>15.000 FC</p></div>
+                <div class="product-card-2"><img><h3>Produit 2</h3><p>25.000 FC</p></div>
+                <div class="product-card-2"><img><h3>Produit 3</h3><p>8.500 FC</p></div>
+                <div class="product-card-2"><img><h3>Produit 4</h3><p>120.000 FC</p></div>
+                <div class="product-card-2"><img><h3>Produit 5</h3><p>45.000 FC</p></div>
+                <div class="product-card-2"><img><h3>Produit 6</h3><p>3.000 FC</p></div>
+                <div class="product-card-2"><img><h3>Produit 7</h3><p>67.000 FC</p></div>
+                <div class="product-card-2"><img><h3>Produit 8</h3><p>9.900 FC</p></div>
+                <div class="product-card-2"><img><h3>Produit 9</h3><p>150.000 FC</p></div>
+                <div class="product-card-2"><img><h3>Produit 10</h3><p>22.000 FC</p></div>
+                <div class="product-card-2"><img><h3>Produit 11</h3><p>5.500 FC</p></div>
+                <div class="product-card-2"><img><h3>Produit 12</h3><p>88.000 FC</p></div>
             </div>
+        </div>
 
-            <div id="fournisseurs" class="tab-content">
-                <h2 class="titre-page">fournisseurs</h2>
-                <div class="fournisseur-list">
-                    <div class="fournisseur-card">
-                        <div class="fournisseur-photo">Photo</div>
-                        <div class="fournisseur-info">
-                            <p class="nom-complet">KASONGO</p>
-                            <p><strong>Post-nom:</strong> Tshibanda</p>
-                            <p><strong>Prénom:</strong> Patrick</p>
-                            <p><strong>Téléphone:</strong> +243 812 345 678</p>
-                            <p><strong>Email:</strong> patrick@gmail.com</p>
-                            <p><strong>Pays:</strong> RDC</p>
-                        </div>
+        <!-- PAGE ARTICLES (Grille 3 col - Ton code complet) -->
+        <div id="page-articles-liste" class="tab-content" style="padding: 80px 15px 100px;">
+            <h2 class="titre-page">articles</h2>
+            <div class="products-grid-3">
+                <div class="product-card-3"><img><h3>Robe Chic</h3><p>25.000 FC</p></div>
+                <div class="product-card-3"><img><h3>T-shirt Homme</h3><p>15.000 FC</p></div>
+                <div class="product-card-3"><img><h3>Jean Slim</h3><p>35.000 FC</p></div>
+                <div class="product-card-3"><img><h3>Veste Enfant</h3><p>20.000 FC</p></div>
+                <div class="product-card-3"><img><h3>Robe Soirée</h3><p>45.000 FC</p></div>
+                <div class="product-card-3"><img><h3>Chemise</h3><p>18.000 FC</p></div>
+                <div class="product-card-3"><img><h3>Pantalon</h3><p>30.000 FC</p></div>
+                <div class="product-card-3"><img><h3>Pull Hiver</h3><p>22.000 FC</p></div>
+                <div class="product-card-3"><img><h3>Jupe</h3><p>16.000 FC</p></div>
+            </div>
+        </div>
+
+        <!-- PAGE FOURNISSEURS (Ton code complet) -->
+        <div id="fournisseurs" class="tab-content" style="padding: 80px 15px 100px;">
+            <h2 class="titre-page">fournisseurs</h2>
+            <div class="fournisseur-list">
+                <div class="fournisseur-card">
+                    <div class="fournisseur-photo">Photo</div>
+                    <div class="fournisseur-info">
+                        <p class="nom-complet">KASONGO</p>
+                        <p><strong>Post-nom:</strong> Tshibanda</p>
+                        <p><strong>Prénom:</strong> Patrick</p>
+                        <p><strong>Téléphone:</strong> +243 812 345 678</p>
+                        <p><strong>Email:</strong> patrick@gmail.com</p>
+                        <p><strong>Pays:</strong> RDC</p>
+                    </div>
+                </div>
+                <div class="fournisseur-card">
+                    <div class="fournisseur-photo">Photo</div>
+                    <div class="fournisseur-info">
+                        <p class="nom-complet">MUKENDI</p>
+                        <p><strong>Post-nom:</strong> Kabeya</p>
+                        <p><strong>Prénom:</strong> Grâce</p>
+                        <p><strong>Téléphone:</strong> +243 900 123 456</p>
+                        <p><strong>Email:</strong> grace.mukendi@gmail.com</p>
+                        <p><strong>Pays:</strong> RDC</p>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div id="categories" class="tab-content">
-                <div class="cat-split">
-                    <aside class="sidebar-categories">
-                        <h2>Pour vous</h2>
-                        <div class="category-item active">Vêtements Femme</div>
-                        <div class="category-item">Vêtements Homme</div>
-                    </aside>
-                    <section class="articles-area">
-                        <div class="products-grid-2">
-                            <div class="product-card-2"><img><h3>Robe Chic</h3><p>25.000 FC</p></div>
-                        </div>
-                    </section>
-                </div>
+        <!-- PAGE CATEGORIES (Ton code complet) -->
+        <div id="categories" class="tab-content" style="padding: 80px 0 100px;">
+            <div class="cat-split">
+                <aside class="sidebar-categories">
+                    <h2>Pour vous</h2>
+                    <div class="category-item active">Vêtements Femme</div>
+                    <div class="category-item">Vêtements Homme</div>
+                    <div class="category-item">Vêtements Enfant</div>
+                    <div class="category-item">Boucles d'oreille</div>
+                    <div class="category-item">Bagues</div>
+                    <div class="category-item">Chaussures Homme</div>
+                    <div class="category-item">Chaussures Femme</div>
+                    <div class="category-item">Chaussures Enfant</div>
+                    <div class="category-item">Pantalon</div>
+                    <div class="category-item">Chemise</div>
+                    <div class="category-item">Robe</div>
+                    <div class="category-item">Sac</div>
+                    <div class="category-item">Montre</div>
+                    <div class="category-item">Chapeau</div>
+                </aside>
+                <section class="articles-area">
+                    <div class="products-grid-2">
+                        <div class="product-card-2"><img><h3>Robe Chic</h3><p>25.000 FC</p></div>
+                        <div class="product-card-2"><img><h3>T-shirt Homme</h3><p>15.000 FC</p></div>
+                        <div class="product-card-2"><img><h3>Jean Slim</h3><p>35.000 FC</p></div>
+                        <div class="product-card-2"><img><h3>Boucle Or</h3><p>12.000 FC</p></div>
+                        <div class="product-card-2"><img><h3>Bague Argent</h3><p>8.000 FC</p></div>
+                        <div class="product-card-2"><img><h3>Chaussure</h3><p>40.000 FC</p></div>
+                        <div class="product-card-2"><img><h3>Chemise</h3><p>18.000 FC</p></div>
+                        <div class="product-card-2"><img><h3>Sac Femme</h3><p>30.000 FC</p></div>
+                    </div>
+                </section>
             </div>
         </div>
     </main>
@@ -102,21 +150,18 @@
         </div>
     </main>
 
-    <!-- PAGE A PROPOS (REMIS EXACTEMENT SELON TON CODE) -->
+    <!-- PAGE A PROPOS -->
     <main id="page-propos" class="page">
         <div class="content-propos">
             <h2 class="titre-page-ap">à propos</h2>
-            
             <div class="about-card">
                 <h3><i class="fa-solid fa-store"></i> Qui sommes-nous ?</h3>
                 <p>PM BUSINESS est votre boutique de mode en ligne n°1 au Congo. Nous sélectionnons pour vous les meilleures tendances de vêtements pour toute la famille, à des prix abordables et avec une livraison rapide.</p>
             </div>
-
             <div class="about-card">
                 <h3><i class="fa-solid fa-bullseye"></i> Notre Mission</h3>
                 <p>Rendre le style accessible à tous. Nous voulons que chaque Congolais puisse s'habiller avec élégance, sans se ruiner et en 1 clic.</p>
             </div>
-
             <div class="about-card">
                 <h3><i class="fa-solid fa-star"></i> Pourquoi nous choisir ?</h3>
                 <div class="valeurs">
@@ -126,12 +171,9 @@
                     <div class="valeur-item"><i class="fa-solid fa-headset"></i> Service Client</div>
                 </div>
             </div>
-
             <div class="about-card">
                 <h3><i class="fa-solid fa-phone"></i> Nous Contacter</h3>
-                <p><strong>Téléphone:</strong> +243 812 345 678<br>
-                <strong>WhatsApp:</strong> +243 812 345 678<br>
-                <strong>Ville:</strong> Lubumbashi, RDC</p>
+                <p><strong>Téléphone:</strong> +243 812 345 678<br><strong>WhatsApp:</strong> +243 812 345 678<br><strong>Ville:</strong> Lubumbashi, RDC</p>
             </div>
         </div>
     </main>
@@ -151,4 +193,4 @@
 
     <script src="script.js"></script>
 </body>
-                    </html>
+    </html>
