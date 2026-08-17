@@ -1,47 +1,43 @@
-document.addEventListener('DOMContentLoaded', function() {
-    
-    // Sélection des éléments
-    const btnArticles = document.getElementById('tab-articles-btn');
-    const btnAccueil = document.getElementById('btn-footer-accueil');
-    
-    const headerHome = document.getElementById('header-home');
-    const headerArticles = document.getElementById('header-articles');
-    const navTabs = document.querySelector('.nav-tabs');
-    const separator = document.querySelector('.separator');
-    
-    const viewHome = document.getElementById('view-home');
-    const viewArticles = document.getElementById('view-articles');
-    const contentArea = document.querySelector('.content');
+function showHeaderNav(pageId, element) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + pageId).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    element.classList.add('active');
+    loadHeader('simple');
+}
 
-    // Fonction pour afficher la page Articles
-    btnArticles.addEventListener('click', function(e) {
-        e.preventDefault();
+function showFooterPage(pageId, element) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + pageId).classList.add('active');
+    document.querySelectorAll('.footer-item').forEach(f => f.classList.remove('active'));
+    element.classList.add('active');
+    loadHeader(pageId === 'message' ? 'grand' : 'simple');
+}
 
-        // 1. Cacher le header accueil et montrer le header simple
-        headerHome.classList.add('hidden');
-        headerArticles.classList.remove('hidden');
+function loadHeader(type) {
+    const headerContainer = document.getElementById('header-container');
+    if(type === 'grand') {
+        headerContainer.innerHTML = '';
+    } else {
+        headerContainer.innerHTML = `
+        <header class="header-simple">
+            <div class="header-top">
+                <div class="logo">PM</div>
+                <div class="brand-name">PM BUSINESS</div>
+            </div>
+            <div class="header-nav">
+                <div class="nav-item active" onclick="showHeaderNav('articles', this)">Articles</div>
+                <div class="nav-item" onclick="showHeaderNav('fournisseurs', this)">Fournisseurs</div>
+                <div class="nav-item" onclick="showHeaderNav('categories', this)">Catégories</div>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Recherche un produit">
+            </div>
+        </header>`;
+    }
+}
 
-        // 2. Cacher les onglets et le séparateur (comme sur ton design Articles)
-        navTabs.classList.add('hidden');
-        separator.classList.add('hidden');
-
-        // 3. Basculer le contenu
-        viewHome.classList.add('hidden');
-        viewArticles.classList.remove('hidden');
-
-        // 4. Ajuster le padding du contenu (car le header simple est moins haut)
-        contentArea.style.paddingTop = "80px";
-    });
-
-    // Optionnel : Retour à l'accueil via le footer
-    btnAccueil.addEventListener('click', function(e) {
-        e.preventDefault();
-        headerHome.classList.remove('hidden');
-        headerArticles.classList.add('hidden');
-        navTabs.classList.remove('hidden');
-        separator.classList.remove('hidden');
-        viewHome.classList.remove('hidden');
-        viewArticles.classList.add('hidden');
-        contentArea.style.paddingTop = "140px";
-    });
-});
+// Charger le header au démarrage
+window.onload = function() {
+    loadHeader('simple');
+};
