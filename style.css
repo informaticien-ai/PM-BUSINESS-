@@ -1,115 +1,87 @@
-/* Couleurs du logo */
 :root {
     --bleu-royal: #00468c;
-    --bleu-clair: #0072ff;
-    --rouge-vif: #e30613;
-    --jaune-or: #ffc20e;
-    --blanc: #ffffff;
-    --gris-fond: #f0f2f5;
+    --rouge-vif: #ff0000;
+    --jaune-or: #ffcc00;
+    --rose: #ff69b4;
+    --vert-whatsapp: #25D366;
     --ombre-3d: 0 10px 25px rgba(0,0,0,0.1);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+body { background-color: #f0f2f5; height: 100vh; overflow: hidden; }
 
-body { 
-    background-color: var(--gris-fond); 
-    height: 100vh; 
-    overflow: hidden; 
-}
-
-/* --- HEADERS --- */
-header {
+/* HEADER */
+#main-header {
     position: fixed; top: 0; left: 0; right: 0;
-    background: white; padding: 10px 20px;
+    background: white; padding: 15px 20px;
     display: flex; align-items: center; justify-content: space-between;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 1000;
 }
-
-.app-logo { height: 45px; width: auto; }
-
+.app-logo { height: 40px; }
 .brand-name { font-weight: 800; color: var(--bleu-royal); font-size: 1.1rem; }
 .brand-name span { color: var(--rouge-vif); }
+.search-bar { flex: 1; margin-left: 15px; padding: 10px 15px; border-radius: 20px; border: none; background: #f1f1f1; outline: none; font-size: 0.8rem; }
 
-.search-bar { 
-    width: 100%; padding: 10px 15px; border-radius: 25px; 
-    border: none; background: #f1f1f1; outline: none; font-size: 0.8rem; 
-}
-
-/* --- NAVIGATION --- */
+/* NAV TABS (Articles, Fournisseur, Catégorie) */
 #top-nav {
-    position: fixed; top: 65px; left: 0; right: 0;
+    position: fixed; top: 68px; left: 0; right: 0;
     display: flex; justify-content: space-around;
     background: white; padding: 12px 0; border-bottom: 2px solid #eee; z-index: 999;
 }
-
-.nav-link { text-decoration: none; color: #666; font-weight: 600; font-size: 0.85rem; padding: 5px 10px; }
+.nav-link { text-decoration: none; color: #666; font-weight: 600; font-size: 0.9rem; padding: 5px 10px; transition: 0.3s; }
 .nav-link.active { color: var(--bleu-royal); border-bottom: 3px solid var(--jaune-or); }
 
-/* --- PAGES & LAYOUT --- */
+/* PAGES */
 .page { display: none; height: 100vh; overflow-y: auto; padding-bottom: 120px; }
 .page.active { display: block; }
-
 .pt-accueil { padding-top: 130px; }
-.pt-simple { padding-top: 85px; }
 
-/* Grille Articles */
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; }
-.card-art { 
-    background: white; border-radius: 12px; padding: 10px; 
-    text-align: center; box-shadow: var(--ombre-3d); transition: 0.3s;
-}
-.img-placeholder { width: 100%; height: 80px; background: #eee; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #ccc; }
+/* ARTICLES GRID 3 COL */
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 15px; }
+.card-art { background: white; border-radius: 12px; padding: 8px; text-align: center; box-shadow: var(--ombre-3d); }
+.img-placeholder { width: 100%; height: 90px; background: #e0e0e0; border-radius: 8px; margin-bottom: 8px; }
+.price-tag { color: var(--rouge-vif); font-weight: 700; font-size: 0.9rem; margin-bottom: 5px; }
+.btn-pay { background: var(--bleu-royal); color: white; border: none; padding: 5px; border-radius: 5px; font-size: 0.7rem; width: 100%; font-weight: 600; }
 
-.price-tag { color: var(--rouge-vif); font-weight: 800; font-size: 0.85rem; margin: 8px 0; }
-
-.btn-pay { 
-    background: var(--bleu-royal); color: white; border: none; 
-    padding: 6px; border-radius: 6px; font-size: 0.65rem; width: 100%; font-weight: 600;
-}
-
-/* Style Fournisseurs */
+/* FOURNISSEURS */
 .f-card { background: white; border-radius: 15px; padding: 15px; margin: 15px; display: flex; gap: 15px; box-shadow: var(--ombre-3d); }
-.f-photo { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--jaune-or); background: #eee; display: flex; align-items: center; justify-content: center; color: #bbb; }
-.f-info h4 { color: var(--rouge-vif); margin-bottom: 5px; }
+.f-photo { width: 65px; height: 65px; border-radius: 50%; border: 3px solid var(--jaune-or); background: #ddd; flex-shrink: 0; }
+.f-info h4 { color: var(--rouge-vif); font-size: 1rem; }
 .f-info p { font-size: 0.8rem; color: #444; }
 
-/* Style Catégories */
+/* CATEGORIES */
 .cat-container { display: flex; height: 100%; }
 .cat-sidebar { width: 35%; background: white; border-right: 2px solid var(--jaune-or); padding: 15px 10px; }
-.cat-item { padding: 12px 10px; font-size: 0.8rem; font-weight: 600; border-radius: 8px; margin-bottom: 8px; }
+.cat-item { padding: 12px 8px; font-size: 0.8rem; font-weight: 600; border-radius: 8px; margin-bottom: 5px; }
 .cat-item.active { background: var(--jaune-or); color: var(--bleu-royal); }
 
-/* --- PAGE MESSAGE SPECIAL --- */
-.header-grand { text-align: center; padding: 40px 20px; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-.logo-large { width: 100px; height: auto; margin-bottom: 15px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
-.brand-title { color: var(--bleu-royal); font-weight: 800; }
-
-.msg-content { padding: 40px 25px; text-align: center; }
-.section-title { color: var(--bleu-royal); border-bottom: 3px solid var(--jaune-or); display: inline-block; padding-bottom: 5px; margin-bottom: 20px; text-transform: uppercase; font-size: 1.2rem; }
-.msg-question { margin-bottom: 35px; color: #444; font-weight: 500; }
-
-.btn-choix { 
-    display: flex; align-items: center; justify-content: center; gap: 15px; 
-    padding: 18px; border-radius: 15px; text-decoration: none; font-weight: 700; color: white; 
-    margin-bottom: 20px; box-shadow: var(--ombre-3d); transition: 0.3s;
-}
-.btn-whatsapp { background: #25D366; }
+/* MESSAGE PAGE */
+.header-grand { text-align: center; padding: 40px 20px; background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.05); }
+.logo-grand-img { width: 90px; border-radius: 20px; border: 4px solid var(--jaune-or); margin-bottom: 10px; }
+.brand-name-grand { font-size: 1.8rem; font-weight: 800; color: var(--bleu-royal); }
+.msg-content { padding: 30px 20px; text-align: center; }
+.titre-message { font-size: 1.1rem; color: var(--bleu-royal); border-bottom: 3px solid var(--jaune-or); display: inline-block; padding-bottom: 5px; margin-bottom: 25px; }
+.btn-choix { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px; border-radius: 15px; text-decoration: none; font-weight: 700; color: white; margin-bottom: 15px; box-shadow: var(--ombre-3d); }
+.btn-whatsapp { background: var(--vert-whatsapp); }
 .btn-site { background: var(--bleu-royal); }
 
-/* --- FOOTER --- */
+/* A PROPOS */
+.header-simple { display: flex; align-items: center; gap: 12px; padding: 15px 20px; background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.05); }
+.logo-sq { width: 40px; border-radius: 10px; }
+.about-content { padding: 20px; }
+.titre-page-ap { text-align: center; font-size: 1.2rem; border-bottom: 2px solid var(--jaune-or); padding-bottom: 10px; margin-bottom: 20px; color: var(--bleu-royal); }
+.about-card { background: white; border-radius: 15px; padding: 20px; box-shadow: var(--ombre-3d); margin-bottom: 20px; }
+.valeurs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.valeur-item { background: #f8f9fa; padding: 10px; border-radius: 10px; text-align: center; font-size: 0.8rem; font-weight: 600; }
+
+/* FOOTER */
 footer {
     position: fixed; bottom: 15px; left: 15px; right: 15px;
-    height: 70px; background: white; border-radius: 25px;
+    height: 70px; background: white; border-radius: 20px;
     display: flex; justify-content: space-around; align-items: center;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2); border-top: 3px solid var(--jaune-or); z-index: 1000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-top: 3px solid var(--jaune-or); z-index: 1000;
 }
-
-.foot-link { text-decoration: none; text-align: center; color: #888; font-size: 0.75rem; font-weight: 600; }
-.foot-link i { display: block; font-size: 1.7rem; margin-bottom: 2px; }
+.foot-link { text-decoration: none; text-align: center; color: #888; font-size: 0.8rem; font-weight: 600; }
+.foot-link i { display: block; font-size: 1.6rem; margin-bottom: 2px; }
 .foot-link.active { color: var(--bleu-royal); }
 .foot-link.active i { color: var(--rouge-vif); }
-
-/* Divers */
-.section-title-center { text-align: center; color: var(--bleu-royal); padding: 20px; border-bottom: 3px solid var(--jaune-or); margin: 0 20px 20px; }
-.about-card { background: white; border-radius: 15px; padding: 20px; margin: 15px; box-shadow: var(--ombre-3d); }
-.about-card h3 { color: var(--bleu-royal); font-size: 1rem; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
