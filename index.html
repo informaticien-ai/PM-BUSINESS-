@@ -3,70 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PM BUSINESS - Premium</title>
+    <title>PM BUSINESS</title>
     <!-- Police Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <!-- Icones FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Fichier CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Header FIXE -->
-    <header>
+    <!-- ==========================================
+         HEADERS (Un pour l'accueil, un pour articles)
+         ========================================== -->
+    <header id="header-home">
         <div class="brand-name">PM <span>BUSINESS</span></div>
         <div class="search-container">
             <input type="text" class="search-bar" placeholder="🔍 Recherche un produit...">
         </div>
     </header>
 
-    <!-- Séparateur FIXE -->
-    <div class="separator"></div>
+    <header id="header-articles" class="header-simple hidden">
+        <div class="logo">PM</div>
+        <div class="brand-name-simple">PM BUSINESS</div>
+    </header>
 
-    <!-- Menu Onglets FIXE -->
+    <!-- Éléments communs de navigation -->
+    <div class="separator"></div>
     <nav class="nav-tabs">
-        <a href="#" class="active">Articles</a>
+        <a href="#" id="tab-articles-btn">Articles</a>
         <a href="#">Fournisseur</a>
         <a href="#">Catégories</a>
     </nav>
 
-    <!-- Corps de la page QUI SCROLL -->
+    <!-- ==========================================
+         CONTENUS (Accueil vs Articles)
+         ========================================== -->
     <main class="content">
-        <div class="products-grid">
-            <!-- 12 produits de test pour voir le scroll -->
+        
+        <!-- VUE ACCUEIL (Grille 2 colonnes) -->
+        <div id="view-home" class="products-grid">
             <div class="product-card"><img><h3>Produit 1</h3><p>15.000 FC</p></div>
             <div class="product-card"><img><h3>Produit 2</h3><p>25.000 FC</p></div>
             <div class="product-card"><img><h3>Produit 3</h3><p>8.500 FC</p></div>
             <div class="product-card"><img><h3>Produit 4</h3><p>120.000 FC</p></div>
             <div class="product-card"><img><h3>Produit 5</h3><p>45.000 FC</p></div>
             <div class="product-card"><img><h3>Produit 6</h3><p>3.000 FC</p></div>
-            <div class="product-card"><img><h3>Produit 7</h3><p>67.000 FC</p></div>
-            <div class="product-card"><img><h3>Produit 8</h3><p>9.900 FC</p></div>
-            <div class="product-card"><img><h3>Produit 9</h3><p>150.000 FC</p></div>
-            <div class="product-card"><img><h3>Produit 10</h3><p>22.000 FC</p></div>
-            <div class="product-card"><img><h3>Produit 11</h3><p>5.500 FC</p></div>
-            <div class="product-card"><img><h3>Produit 12</h3><p>88.000 FC</p></div>
         </div>
+
+        <!-- VUE ARTICLES (Grille 3 colonnes) -->
+        <div id="view-articles" class="hidden">
+            <h2 class="titre-page">articles</h2>
+            <div class="products-grid-3">
+                <div class="product-card"><img><h3>Robe Chic</h3><p>25.000 FC</p></div>
+                <div class="product-card"><img><h3>T-shirt Homme</h3><p>15.000 FC</p></div>
+                <div class="product-card"><img><h3>Jean Slim</h3><p>35.000 FC</p></div>
+                <div class="product-card"><img><h3>Veste Enfant</h3><p>20.000 FC</p></div>
+                <div class="product-card"><img><h3>Robe Soirée</h3><p>45.000 FC</p></div>
+                <div class="product-card"><img><h3>Chemise</h3><p>18.000 FC</p></div>
+                <div class="product-card"><img><h3>Pantalon</h3><p>30.000 FC</p></div>
+                <div class="product-card"><img><h3>Pull Hiver</h3><p>22.000 FC</p></div>
+                <div class="product-card"><img><h3>Jupe</h3><p>16.000 FC</p></div>
+            </div>
+        </div>
+
     </main>
 
-    <!-- Footer FIXE avec ICONES -->
+    <!-- FOOTER FIXE -->
     <footer>
-        <a href="#" class="footer-item accueil">
+        <a href="#" class="footer-item active" id="btn-footer-accueil">
             <i class="fa-solid fa-house"></i>
             <span>Accueil</span>
         </a>
-        <a href="#" class="footer-item message">
+        <a href="#" class="footer-item">
             <i class="fa-solid fa-comment-dots"></i>
             <span>Message</span>
         </a>
-        <a href="#" class="footer-item propos">
+        <a href="#" class="footer-item">
             <i class="fa-solid fa-circle-info"></i>
             <span>À propos</span>
         </a>
     </footer>
 
-    <!-- Fichier JS -->
     <script src="script.js"></script>
 </body>
 </html>
