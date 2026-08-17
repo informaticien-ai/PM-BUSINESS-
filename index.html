@@ -3,151 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PM BUSINESS - Vêtements</title>
+    <title>PM BUSINESS - Fournisseurs & Supabase</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-    <!-- HEADER DYNAMIQUE -->
     <div id="header-container"></div>
 
-    <!-- PAGE 1: ARTICLES -->
-    <div id="page-articles" class="page active">
+    <!-- PAGE FOURNISSEURS (Liste dynamique) -->
+    <div id="page-fournisseurs" class="page active">
         <main class="content">
-            <h2 class="titre-page">articles</h2>
-            <div class="products-grid-3">
-                <div class="product-card"><img><h3>Robe Chic</h3><p>25.000 FC</p></div>
-                <div class="product-card"><img><h3>T-shirt Homme</h3><p>15.000 FC</p></div>
-                <div class="product-card"><img><h3>Jean Slim</h3><p>35.000 FC</p></div>
-                <div class="product-card"><img><h3>Veste Enfant</h3><p>20.000 FC</p></div>
-                <div class="product-card"><img><h3>Robe Soirée</h3><p>45.000 FC</p></div>
-                <div class="product-card"><img><h3>Chemise</h3><p>18.000 FC</p></div>
-                <div class="product-card"><img><h3>Pantalon</h3><p>30.000 FC</p></div>
-                <div class="product-card"><img><h3>Pull Hiver</h3><p>22.000 FC</p></div>
-                <div class="product-card"><img><h3>Jupe</h3><p>16.000 FC</p></div>
+            <h2 class="titre-page">nos fournisseurs</h2>
+            <div id="suppliers-list" class="fournisseur-list">
+                <!-- Les fournisseurs Supabase s'afficheront ici -->
+                <p style="text-align:center;">Chargement des fournisseurs...</p>
             </div>
         </main>
     </div>
 
-    <!-- PAGE 2: FOURNISSEURS -->
-    <div id="page-fournisseurs" class="page">
+    <!-- PAGE INSCRIPTION FOURNISSEUR -->
+    <div id="page-inscription-fournisseur" class="page">
         <main class="content">
-            <h2 class="titre-page">fournisseurs</h2>
-            <div class="fournisseur-list">
-                <div class="fournisseur-card">
-                    <div class="fournisseur-photo"></div>
-                    <div class="fournisseur-info">
-                        <p class="nom-complet">KASONGO</p>
-                        <p><strong>Post-nom:</strong> Tshibanda</p>
-                        <p><strong>Prénom:</strong> Patrick</p>
-                        <p><strong>Téléphone:</strong> +243 812 345 678</p>
-                        <p><strong>Email:</strong> patrick@gmail.com</p>
-                        <p><strong>Pays:</strong> RDC</p>
-                    </div>
+            <h2 class="titre-page">devenir fournisseur</h2>
+            <form id="form-add-supplier" class="supplier-form">
+                <div class="photo-upload">
+                    <label for="f-photo">
+                        <div id="photo-preview"><i class="fa-solid fa-camera"></i><br>Photo</div>
+                    </label>
+                    <input type="file" id="f-photo" accept="image/*" hidden required>
                 </div>
-                <div class="fournisseur-card">
-                    <div class="fournisseur-photo"></div>
-                    <div class="fournisseur-info">
-                        <p class="nom-complet">MUKENDI</p>
-                        <p><strong>Post-nom:</strong> Kabeya</p>
-                        <p><strong>Prénom:</strong> Grâce</p>
-                        <p><strong>Téléphone:</strong> +243 900 123 456</p>
-                        <p><strong>Email:</strong> grace@gmail.com</p>
-                        <p><strong>Pays:</strong> RDC</p>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- PAGE 3: CATEGORIES -->
-    <div id="page-categories" class="page">
-        <main class="content-categories">
-            <aside class="sidebar-categories">
-                <h2>Pour vous</h2>
-                <div class="category-item active">Vêtements Femme</div>
-                <div class="category-item">Vêtements Homme</div>
-                <div class="category-item">Vêtements Enfant</div>
-                <div class="category-item">Boucles d'oreille</div>
-                <div class="category-item">Bagues</div>
-                <div class="category-item">Chaussures Homme</div>
-                <div class="category-item">Chaussures Femme</div>
-                <div class="category-item">Chaussures Enfant</div>
-                <div class="category-item">Pantalon</div>
-                <div class="category-item">Chemise</div>
-            </aside>
-            <section class="articles-area">
-                <div class="products-grid-2">
-                    <div class="product-card"><img><h3>Robe Chic</h3><p>25.000 FC</p></div>
-                    <div class="product-card"><img><h3>T-shirt Homme</h3><p>15.000 FC</p></div>
-                    <div class="product-card"><img><h3>Boucle Or</h3><p>12.000 FC</p></div>
-                    <div class="product-card"><img><h3>Bague Argent</h3><p>8.000 FC</p></div>
-                    <div class="product-card"><img><h3>Chaussure</h3><p>40.000 FC</p></div>
-                    <div class="product-card"><img><h3>Chemise</h3><p>18.000 FC</p></div>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- PAGE 4: MESSAGE -->
-    <div id="page-message" class="page">
-        <header class="header-grand">
-            <div class="logo-grand">PM</div>
-            <div class="brand-name-grand">PM BUSINESS</div>
-        </header>
-        <main class="content-message">
-            <h2 class="titre-page">message</h2>
-            <p class="question">Comment souhaitez-vous discuter<br>avec un fournisseur ?</p>
-            <div class="choix-discussion">
-                <a href="https://wa.me/243812345678" target="_blank" class="btn-choix btn-whatsapp">
-                    <i class="fa-brands fa-whatsapp"></i><span>Par WhatsApp</span>
-                </a>
-                <a href="#" class="btn-choix btn-site">
-                    <i class="fa-solid fa-comments"></i><span>Toujours sur le site</span>
-                </a>
-            </div>
-        </main>
-    </div>
-
-    <!-- PAGE 5: A PROPOS -->
-    <div id="page-apropos" class="page">
-        <main class="content">
-            <h2 class="titre-page">à propos</h2>
-            <div class="about-card">
-                <h3><i class="fa-solid fa-store"></i> Qui sommes-nous ?</h3>
-                <p>PM BUSINESS est votre boutique de mode en ligne n°1 à Lubumbashi. Nous sélectionnons pour vous les meilleures tendances de vêtements pour toute la famille.</p>
-            </div>
-            <div class="about-card">
-                <h3><i class="fa-solid fa-bullseye"></i> Notre Mission</h3>
-                <p>Rendre le style accessible à tous. S'habiller avec élégance, sans se ruiner et en 1 clic.</p>
-            </div>
-            <div class="about-card">
-                <h3><i class="fa-solid fa-star"></i> Nos Valeurs</h3>
-                <div class="valeurs">
-                    <div class="valeur-item"><i class="fa-solid fa-check"></i> Qualité</div>
-                    <div class="valeur-item"><i class="fa-solid fa-truck-fast"></i> Livraison</div>
-                    <div class="valeur-item"><i class="fa-solid fa-tags"></i> Prix Bas</div>
-                    <div class="valeur-item"><i class="fa-solid fa-headset"></i> Support</div>
-                </div>
-            </div>
+                
+                <input type="text" id="f-nom" placeholder="Nom" required>
+                <input type="text" id="f-postnom" placeholder="Post-nom" required>
+                <input type="text" id="f-prenom" placeholder="Prénom" required>
+                <input type="text" id="f-phone" placeholder="Numéro de téléphone" required>
+                <input type="email" id="f-email" placeholder="Email" required>
+                <input type="text" id="f-pays" placeholder="Pays (ex: RDC)" required>
+                
+                <button type="submit" class="btn-submit">S'inscrire comme fournisseur</button>
+            </form>
         </main>
     </div>
 
     <!-- FOOTER -->
     <footer>
-        <div class="footer-item active" onclick="showFooterPage('articles', this)">
-            <i class="fa-solid fa-house"></i><span>Accueil</span>
+        <div class="footer-item active" onclick="showFooterPage('fournisseurs', this)">
+            <i class="fa-solid fa-users"></i><span>Fournisseurs</span>
         </div>
-        <div class="footer-item" onclick="showFooterPage('message', this)">
-            <i class="fa-solid fa-comment-dots"></i><span>Message</span>
-        </div>
-        <div class="footer-item" onclick="showFooterPage('apropos', this)">
-            <i class="fa-solid fa-circle-info"></i><span>À propos</span>
+        <div class="footer-item" onclick="showFooterPage('inscription-fournisseur', this)">
+            <i class="fa-solid fa-user-plus"></i><span>S'inscrire</span>
         </div>
     </footer>
 
     <script src="script.js"></script>
 </body>
-                </html>
+</html>
