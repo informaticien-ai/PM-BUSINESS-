@@ -1,16 +1,12 @@
-// Navigation principale (Footer)
 function navTo(page, element) {
-    // UI Footer
     document.querySelectorAll('footer a').forEach(a => a.classList.remove('active'));
     element.classList.add('active');
 
-    // Visibilité des Headers
     document.getElementById('header-accueil').style.display = 'none';
     document.getElementById('header-simple').style.display = 'none';
     document.getElementById('header-message').style.display = 'none';
     document.getElementById('accueil-tabs').style.display = 'none';
 
-    // Logique des Pages
     if (page === 'accueil') {
         document.getElementById('header-accueil').style.display = 'flex';
         document.getElementById('accueil-tabs').style.display = 'block';
@@ -26,13 +22,10 @@ function navTo(page, element) {
     }
 }
 
-// Navigation Onglets (Articles / Fournisseur / Catégories)
 function showTab(id, element) {
-    // UI Tabs
     document.querySelectorAll('.nav-tabs a').forEach(a => a.classList.remove('active'));
     element.classList.add('active');
 
-    // Headers conditionnels
     if (id === 'articles-grid') {
         document.getElementById('header-accueil').style.display = 'flex';
         document.getElementById('header-simple').style.display = 'none';
@@ -41,7 +34,6 @@ function showTab(id, element) {
         document.getElementById('header-simple').style.display = 'flex';
     }
 
-    // Affichage section
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
 }
