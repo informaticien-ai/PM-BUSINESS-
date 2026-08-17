@@ -1,40 +1,47 @@
-// Navigation du footer (Accueil, Message, À propos)
-function navTo(dest, el) {
-    document.querySelectorAll('.foot-link').forEach(l => l.classList.remove('active'));
-    el.classList.add('active');
+function navTo(pageId, element) {
+    document.querySelectorAll('.footer-item').forEach(item => item.classList.remove('active'));
+    element.classList.add('active');
+    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
     
-    const mainHeader = document.getElementById('main-header');
-    const topNav = document.getElementById('top-nav');
+    const hAccueil = document.getElementById('header-accueil');
+    const hSimple = document.getElementById('header-simple');
+    const hGrand = document.getElementById('header-grand');
+    const navCont = document.getElementById('accueil-nav-container');
 
-    if(dest === 'message') {
-        mainHeader.style.display = 'none';
-        topNav.style.display = 'none';
-        showPage('message-page');
-    } else if(dest === 'propos') {
-        mainHeader.style.display = 'none';
-        topNav.style.display = 'none';
-        showPage('propos-page');
-    } else {
-        mainHeader.style.display = 'flex';
-        topNav.style.display = 'flex';
-        showPage('articles'); // Revient sur articles par défaut
+    if(pageId === 'accueil') {
+        document.getElementById('page-accueil').classList.add('active');
+        hAccueil.style.display = 'flex';
+        hSimple.style.display = 'none';
+        hGrand.style.display = 'none';
+        navCont.style.display = 'block';
+    } else if(pageId === 'message') {
+        document.getElementById('page-message').classList.add('active');
+        hAccueil.style.display = 'none';
+        hSimple.style.display = 'none';
+        hGrand.style.display = 'block';
+        navCont.style.display = 'none';
+    } else if(pageId === 'propos') {
+        document.getElementById('page-propos').classList.add('active');
+        hAccueil.style.display = 'none';
+        hSimple.style.display = 'flex';
+        hGrand.style.display = 'none';
+        navCont.style.display = 'none';
     }
 }
 
-// Navigation des onglets du haut (Articles, Fournisseur, Catégories)
-function showTab(tabId, el) {
-    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-    el.classList.add('active');
-    showPage(tabId);
-}
+function switchTab(tabId, element) {
+    document.querySelectorAll('.tab-link').forEach(link => link.classList.remove('active'));
+    element.classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
 
-// Fonction pour afficher une page et cacher les autres
-function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-}
-
-// Fonction de paiement Airtel Money
-function payer(montant) {
-    alert("Redirection Airtel Money...\nMontant : " + montant + " FC\nVeuillez confirmer sur votre téléphone.");
+    const hAccueil = document.getElementById('header-accueil');
+    const hSimple = document.getElementById('header-simple');
+    if(tabId === 'accueil-grid') {
+        hAccueil.style.display = 'flex';
+        hSimple.style.display = 'none';
+    } else {
+        hAccueil.style.display = 'none';
+        hSimple.style.display = 'flex';
+    }
 }
