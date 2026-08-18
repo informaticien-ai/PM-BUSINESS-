@@ -1,93 +1,201 @@
 // CONFIGURATION SUPABASE
-const SUPABASE_URL = 'https://TON_URL_ICI.supabase.co';
-const SUPABASE_KEY = 'TON_ANON_KEY_ICI';
-const supabase = supabasejs.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_URL = "https://jchxvkrgqntkjdfwcidn.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjaHh2a3JncW50a2pkZndjaWRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwMjA0NTksImV4cCI6MjEwMjU5NjQ1OX0.E21zodQvz-2zQbegwEnfMZgVb18ycYTAgQO510P_Hq4";
+const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Gérer la navigation
-function showFooterPage(pageId, element) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('page-' + pageId).classList.add('active');
-    document.querySelectorAll('.footer-item').forEach(f => f.classList.remove('active'));
-    element.classList.add('active');
+let categories = ["Vêtements Femme","Vêtements Homme","Vêtements Enfant","Pantalon","Chemise","Boucles d'oreilles","Bague","Chaînette","Chaussures","Babouche","Chapeau"];
+let fournisseurConnecteID = null;
+
+async function showPage(id, el){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if(id === 'articles'){document.getElementById('search-bar').classList.add('show');} else {document.getElementById('search-bar').classList.remove('show');}
+    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('footer div').forEach(b=>b.classList.remove('active'));
+    if(el) el.classList.add('active');
+    
+    if(id==='categories') loadCategories();
+    if(id==='articles') loadArticles();
+    if(id==='fournisseurs') loadFournisseurs();
 }
 
-// Preview de la photo lors du choix
-document.getElementById('f-photo').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            document.getElementById('photo-preview').innerHTML = `<img src="${event.target.result}">`;
-        }
-        reader.readAsDataURL(file);
+// CHARGER LES ARTICLES
+async function loadArticles(){
+    let grid = document.getElementById('articles-grid'); 
+    grid.innerHTML='Chargement...';
+    
+    const { data: articles, error } = await _supabase.from('articles').select('*');
+    
+    grid.innerHTML='';
+    if(articles) {
+        articles.forEach((a)=>{
+            grid.innerHTML += `<div class="card" onclick="openPopup('${a.nom}','${a.prix}','${a.image_url}')"><img src="${a.image_url}"><h4>${a.nom}</h4><p>${a.prix}</p></div>`
+        });
     }
-});
+}
 
-// INSCRIPTION FOURNISSEUR (Upload photo + Sauvegarde SQL)
-document.getElementById('form-add-supplier').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = e.target.querySelector('button');
-    btn.innerText = "Inscription en cours...";
-    btn.disabled = true;
+function openPopup(nom, prix, img){
+    document.getElementById('popup').classList.add('active');
+    document.getElementById('popup-content').innerHTML = `<img src="${img}" style="width:200px;height:200px;background:#ddd;border-radius:10px;"><h2>${nom}</h2><h3 style="color:var(--rouge)">${prix}</h3>`;
+}
 
-    const photoFile = document.getElementById('f-photo').files[0];
-    const fileName = `${Date.now()}_${photoFile.name}`;
+function closePopup(){document.getElementById('popup').classList.remove('active');}
 
-    // 1. Upload de la photo dans le Storage
-    const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('supplier_photos')
-        .upload(fileName, photoFile);
+// CATEGORIES
+function loadCategories(){
+    let side = document.getElementById('sidebar-cat'); side.innerHTML='';
+    categories.forEach((c,i)=>{side.innerHTML += `<div onclick="filterCat('${c}',this)">${c}</div>`})
+    filterCat(categories[0], side.children[0]);
+}
 
-    if (uploadError) return alert("Erreur photo: " + uploadError.message);
-
-    // Récupérer l'URL publique de la photo
-    const photoUrl = supabase.storage.from('supplier_photos').getPublicUrl(fileName).data.publicUrl;
-
-    // 2. Sauvegarde des données dans la table 'suppliers'
-    const supplierData = {
-        last_name: document.getElementById('f-nom').value,
-        post_name: document.getElementById('f-postnom').value,
-        first_name: document.getElementById('f-prenom').value,
-        phone: document.getElementById('f-phone').value,
-        email: document.getElementById('f-email').value,
-        country: document.getElementById('f-pays').value,
-        photo_url: photoUrl
-    };
-
-    const { error: dbError } = await supabase.from('suppliers').insert([supplierData]);
-
-    if (dbError) {
-        alert("Erreur base de données: " + dbError.message);
-    } else {
-        alert("Félicitations ! Vous êtes inscrit.");
-        location.reload();
+async function filterCat(cat, el){
+    document.querySelectorAll('.sidebar div').forEach(d=>d.classList.remove('active'));
+    el.classList.add('active');
+    let grid = document.getElementById('cat-products'); grid.innerHTML='Chargement...';
+    
+    const { data: filtered } = await _supabase.from('articles').select('*').eq('categorie', cat);
+    
+    grid.innerHTML='';
+    if(filtered) {
+        filtered.forEach(a=>{
+            grid.innerHTML += `<div class="card" onclick="openPopup('${a.nom}','${a.prix}','${a.image_url}')"><img src="${a.image_url}"><h4>${a.nom}</h4><p>${a.prix}</p></div>`
+        });
     }
-});
+}
 
-// CHARGER ET AFFICHER LES FOURNISSEURS
-async function fetchSuppliers() {
-    const { data, error } = await supabase
-        .from('suppliers')
+// FOURNISSEURS
+function openForm(){document.getElementById('form-popup').classList.add('active');}
+function closeForm(){document.getElementById('form-popup').classList.remove('active');}
+
+async function inscription(){
+    let nom = document.getElementById('nom').value;
+    let tel = document.getElementById('tel').value;
+    let email = document.getElementById('email').value;
+    let pays = document.getElementById('pays').value;
+    if(nom==="" || tel===""){alert("Remplissez au moins Nom et Téléphone");return;}
+
+    const { error } = await _supabase.from('fournisseurs').insert([{ nom, telephone: tel, email, pays }]);
+    
+    if(!error) {
+        alert("Inscription réussie");
+        closeForm();
+        loadFournisseurs();
+    }
+}
+
+async function loadFournisseurs(){
+    let list = document.getElementById('liste-fournisseurs'); list.innerHTML='Chargement...';
+    const { data: fournisseurs } = await _supabase.from('fournisseurs').select('*');
+    
+    list.innerHTML='';
+    if(fournisseurs) {
+        fournisseurs.forEach((f)=>{
+            list.innerHTML += `<div class="fournisseur" onclick="dashboardFournisseur('${f.id}', '${f.nom}')"><img><div><h3>${f.nom}</h3><p>Tel: ${f.telephone}</p></div></div>`
+        })
+    }
+}
+
+// DASHBOARD
+async function dashboardFournisseur(id, nom){
+    fournisseurConnecteID = id;
+    let html = `<h3>Bonjour ${nom}</h3>
+    <button class="dash-btn" onclick="openFormArticle()">+ Publier un Article</button>
+    <h4 style="margin-top:20px;">Messages Clients</h4><div id="client-list">Chargement messages...</div>`;
+    
+    document.getElementById('popup-content').innerHTML = html;
+    document.getElementById('popup').classList.add('active');
+
+    // Récupérer les noms de clients uniques ayant envoyé un message à ce fournisseur
+    const { data: msgs } = await _supabase.from('messages').select('nom_client').eq('fournisseur_id', id);
+    let clientsUnique = [...new Set(msgs?.map(m => m.nom_client))];
+    
+    let listDiv = document.getElementById('client-list');
+    listDiv.innerHTML = clientsUnique.length ? "" : "Aucun message";
+    clientsUnique.forEach(client => {
+        listDiv.innerHTML += `<div class="msg-client" onclick="openChatFournisseur('${id}', '${client}')">Discussion avec ${client}</div>`;
+    });
+}
+
+function openFormArticle(){
+    let options = categories.map(c=>`<option>${c}</option>`).join('');
+    let html = `<h3>Nouvel Article</h3>
+    <input type="text" id="art-nom" placeholder="Nom de l'article">
+    <input type="text" id="art-prix" placeholder="Prix ex: 15000 FC">
+    <select id="art-cat">${options}</select>
+    <input type="text" id="art-img" placeholder="Lien de l'image">
+    <button onclick="publierArticle()">Publier</button>`;
+    document.getElementById('popup-content').innerHTML = html;
+}
+
+async function publierArticle(){
+    let nom = document.getElementById('art-nom').value;
+    let prix = document.getElementById('art-prix').value;
+    let cat = document.getElementById('art-cat').value;
+    let img = document.getElementById('art-img').value;
+
+    await _supabase.from('articles').insert([{ nom, prix, categorie: cat, image_url: img, fournisseur_id: fournisseurConnecteID }]);
+    alert("Article publié!");
+    closePopup();
+    loadArticles();
+}
+
+// CHAT
+async function openChatList(){
+    const { data: fournisseurs } = await _supabase.from('fournisseurs').select('*');
+    let html = '<h3>Choisir un fournisseur</h3>';
+    fournisseurs?.forEach((f)=>{
+        html += `<div class="fournisseur" onclick="startChat('${f.id}', '${f.nom}')"><img><div><h3>${f.nom}</h3></div></div>`;
+    });
+    document.getElementById('popup-content').innerHTML = html;
+    document.getElementById('popup').classList.add('active');
+}
+
+function startChat(id, nomFournisseur){
+    let nomClient = prompt("Entrez votre nom pour commencer la discussion:");
+    if(!nomClient) return;
+    openChatFournisseur(id, nomClient);
+}
+
+async function openChatFournisseur(fId, clientNom){
+    fournisseurConnecteID = fId;
+    let html = `<h3>Discussion avec ${clientNom}</h3>
+    <div id="chat-box" style="height:250px;overflow-y:auto;background:#f5f5f5;padding:10px;border-radius:10px;margin:10px 0;text-align:left;"></div>
+    <input type="text" id="msg-input" placeholder="Ecrire..." style="width:70%;padding:10px;">
+    <button onclick="sendMsg('${clientNom}')" style="width:25%;padding:10px;background:var(--bleu);color:white;border:none;">Envoyer</button>`;
+    
+    document.getElementById('popup-content').innerHTML = html;
+    loadMessages(fId, clientNom);
+}
+
+async function sendMsg(clientNom){
+    let msg = document.getElementById('msg-input').value;
+    if(msg === "") return;
+    
+    await _supabase.from('messages').insert([{ 
+        fournisseur_id: fournisseurConnecteID, 
+        nom_client: clientNom, 
+        expediteur: clientNom, // Par défaut on considère que c'est le client qui écrit ici
+        contenu: msg 
+    }]);
+    
+    document.getElementById('msg-input').value = "";
+    loadMessages(fournisseurConnecteID, clientNom);
+}
+
+async function loadMessages(fId, clientNom){
+    let box = document.getElementById('chat-box');
+    const { data: msgs } = await _supabase.from('messages')
         .select('*')
-        .order('created_at', { ascending: false });
+        .eq('fournisseur_id', fId)
+        .eq('nom_client', clientNom)
+        .order('created_at', { ascending: true });
 
-    if (data) {
-        const list = document.getElementById('suppliers-list');
-        list.innerHTML = data.map(f => `
-            <div class="fournisseur-card">
-                <div class="fournisseur-photo">
-                    <img src="${f.photo_url || 'https://via.placeholder.com/100'}">
-                </div>
-                <div class="fournisseur-info">
-                    <p class="nom-complet">${f.last_name} ${f.post_name}</p>
-                    <p><strong>Prénom:</strong> ${f.first_name}</p>
-                    <p><strong>Tel:</strong> ${f.phone}</p>
-                    <p><strong>Pays:</strong> ${f.country}</p>
-                    <p><strong>Email:</strong> ${f.email}</p>
-                </div>
-            </div>
-        `).join('');
-    }
+    box.innerHTML = "";
+    msgs?.forEach(m=>{
+        box.innerHTML += `<p><b>${m.expediteur}:</b> ${m.contenu}</p>`;
+    });
+    box.scrollTop = box.scrollHeight;
 }
 
-window.onload = fetchSuppliers;
+// Lancement initial
+loadArticles();
