@@ -3,62 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PM BUSINESS - Fournisseurs & Supabase</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <!-- Supabase SDK -->
+    <title>PM BUSINESS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+    <!-- SDK Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="header-container"></div>
-
-    <!-- PAGE FOURNISSEURS (Liste dynamique) -->
-    <div id="page-fournisseurs" class="page active">
-        <main class="content">
-            <h2 class="titre-page">nos fournisseurs</h2>
-            <div id="suppliers-list" class="fournisseur-list">
-                <!-- Les fournisseurs Supabase s'afficheront ici -->
-                <p style="text-align:center;">Chargement des fournisseurs...</p>
-            </div>
-        </main>
+<header id="main-header">
+    <div class="logo"><span>P</span><span>M</span> <span>BUSINESS</span></div>
+    <div class="search" id="search-bar"><input type="text" placeholder="Rechercher un produit"></div>
+    <div class="nav">
+        <button class="active" onclick="showPage('articles')">Articles</button>
+        <button onclick="showPage('fournisseurs')">Fournisseurs</button>
+        <button onclick="showPage('categories')">Catégories</button>
     </div>
+</header>
 
-    <!-- PAGE INSCRIPTION FOURNISSEUR -->
-    <div id="page-inscription-fournisseur" class="page">
-        <main class="content">
-            <h2 class="titre-page">devenir fournisseur</h2>
-            <form id="form-add-supplier" class="supplier-form">
-                <div class="photo-upload">
-                    <label for="f-photo">
-                        <div id="photo-preview"><i class="fa-solid fa-camera"></i><br>Photo</div>
-                    </label>
-                    <input type="file" id="f-photo" accept="image/*" hidden required>
-                </div>
-                
-                <input type="text" id="f-nom" placeholder="Nom" required>
-                <input type="text" id="f-postnom" placeholder="Post-nom" required>
-                <input type="text" id="f-prenom" placeholder="Prénom" required>
-                <input type="text" id="f-phone" placeholder="Numéro de téléphone" required>
-                <input type="email" id="f-email" placeholder="Email" required>
-                <input type="text" id="f-pays" placeholder="Pays (ex: RDC)" required>
-                
-                <button type="submit" class="btn-submit">S'inscrire comme fournisseur</button>
-            </form>
-        </main>
-    </div>
+<div id="articles" class="page active"><div class="container"><h2 class="titre">Articles</h2><div class="grid-3" id="articles-grid"></div></div></div>
+<div id="fournisseurs" class="page"><div class="container"><h2 class="titre">Fournisseurs</h2><button class="btn-inscrire" onclick="openForm()">S'inscrire comme fournisseur</button><div id="liste-fournisseurs"></div></div></div>
+<div id="categories" class="page"><div class="categories"><div class="sidebar" id="sidebar-cat"></div><div class="products"><div class="grid-2" id="cat-products"></div></div></div></div>
+<div id="message" class="page"><div class="container"><h2 class="titre">Message</h2><p style="text-align:center;">Comment souhaitez-vous discuter avec un fournisseur?</p><div class="choix-btn"><a href="https://wa.me/243812345678" target="_blank" class="btn-wa">📱 Par WhatsApp</a><a href="#" onclick="openChatList()" class="btn-site">💬 Sur le site</a></div></div></div>
+<div id="apropos" class="page"><div class="container"><h2 class="titre">À propos</h2><div style="background:white;padding:20px;border-radius:15px;"><h3>Qui sommes-nous?</h3><p>PM BUSINESS est votre boutique de mode n°1 à Lubumbashi.</p></div></div></div>
 
-    <!-- FOOTER -->
-    <footer>
-        <div class="footer-item active" onclick="showFooterPage('fournisseurs', this)">
-            <i class="fa-solid fa-users"></i><span>Fournisseurs</span>
-        </div>
-        <div class="footer-item" onclick="showFooterPage('inscription-fournisseur', this)">
-            <i class="fa-solid fa-user-plus"></i><span>S'inscrire</span>
-        </div>
-    </footer>
+<!-- POPUP GENERAL -->
+<div class="popup" id="popup"><div class="popup-content"><span class="close" onclick="closePopup()">X</span><div id="popup-content"></div></div></div>
 
-    <script src="script.js"></script>
+<!-- POPUP FORMULAIRE INSCRIPTION -->
+<div class="popup" id="form-popup"><div class="popup-content form-popup"><span class="close" onclick="closeForm()">X</span>
+    <h3>Inscription Fournisseur</h3>
+    <input type="text" id="nom" placeholder="Nom Complet">
+    <input type="tel" id="tel" placeholder="Numéro Téléphone">
+    <input type="email" id="email" placeholder="Email">
+    <input type="text" id="pays" placeholder="Pays">
+    <button onclick="inscription()">Valider</button>
+</div></div>
+
+<footer id="main-footer">
+    <div class="active" onclick="showPage('articles', this)">Accueil</div>
+    <div onclick="showPage('message', this)">Message</div>
+    <div onclick="showPage('apropos', this)">À propos</div>
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>
