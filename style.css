@@ -43,3 +43,31 @@ footer div{text-align:center;font-weight:600;color:#666;cursor:pointer;}
 footer div.active{color:var(--bleu);}
 .dash-btn{background:var(--jaune);color:var(--bleu);padding:10px;border:none;border-radius:8px;width:100%;margin-top:10px;font-weight:700;cursor:pointer;}
 .msg-client{background:#e0e0e0;padding:8px;border-radius:8px;margin:5px 0;text-align:left;cursor:pointer;}
+/* Empêcher la déformation des images */
+.card img, .popup-content img {
+    object-fit: contain; /* L'image garde ses proportions sans être écrasée */
+    background-color: #f9f9f9;
+}
+
+/* Style des bulles de message */
+.msg-container { display: flex; flex-direction: column; gap: 10px; }
+.msg-bubble {
+    max-width: 80%;
+    padding: 10px;
+    border-radius: 15px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+.msg-client { 
+    align-self: flex-end; 
+    background: var(--bleu); 
+    color: white; 
+    border-bottom-right-radius: 2px;
+}
+.msg-fournisseur { 
+    align-self: flex-start; 
+    background: #ddd; 
+    color: #333; 
+    border-bottom-left-radius: 2px;
+}
+.msg-name { font-weight: 800; font-size: 10px; display: block; margin-bottom: 3px; }
