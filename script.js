@@ -18,6 +18,7 @@ async function showPage(id, el){
     if(id==='fournisseurs') loadFournisseurs();
 }
 
+// ARTICLES ACCUEIL
 async function loadArticles(){
     let grid = document.getElementById('articles-grid'); 
     grid.innerHTML='<p>Chargement...</p>';
@@ -25,18 +26,22 @@ async function loadArticles(){
     grid.innerHTML='';
     if(articles) {
         articles.forEach((a)=>{
-            grid.innerHTML += `<div class="card" onclick="openPopup('${a.nom}','${a.prix}','${a.image_url}')"><img src="${a.image_url || ''}"><h4>${a.nom}</h4><p>${a.prix}</p></div>`
+            grid.innerHTML += `<div class="card" onclick="openPopup('${a.nom.replace(/'/g, "\\'")}','${a.prix}','${a.image_url}')"><img src="${a.image_url || ''}"><h4>${a.nom}</h4><p>${a.prix}</p></div>`
         });
     }
 }
 
 function openPopup(nom, prix, img){
     document.getElementById('popup').classList.add('active');
-    document.getElementById('popup-content').innerHTML = `<img src="${img}" style="width:100%; height:300px; border-radius:10px;"><h2>${nom}</h2><h3 style="color:var(--rouge)">${prix}</h3>`;
+    document.getElementById('popup-content').innerHTML = `<img src="${img}" style="width:100%; height:300px; border-radius:10px; object-fit: contain;"><h2>${nom}</h2><h3 style="color:var(--rouge)">${prix}</h3>`;
 }
 
-function closePopup(){document.getElementById('popup').classList.remove('active'); clearInterval(window.chatInterval);}
+function closePopup(){
+    document.getElementById('popup').classList.remove('active'); 
+    if(window.chatInterval) clearInterval(window.chatInterval);
+}
 
+// INSCRIPTION
 async function inscription(){
     let nom = document.getElementById('nom').value;
     let tel = document.getElementById('tel').value;
@@ -48,9 +53,10 @@ async function inscription(){
 async function loadFournisseurs(){
     let list = document.getElementById('liste-fournisseurs'); list.innerHTML='';
     const { data } = await _supabase.from('fournisseurs').select('*');
-    if(data) { data.forEach((f)=>{ list.innerHTML += `<div class="fournisseur" onclick="dashboardFournisseur('${f.id}', '${f.nom}')"><img><div><h3>${f.nom}</h3><p>Tel: ${f.telephone}</p></div></div>` }) }
+    if(data) { data.forEach((f)=>{ list.innerHTML += `<div class="fournisseur" onclick="dashboardFournisseur('${f.id}', '${f.nom.replace(/'/g, "\\'")}')"><img><div><h3>${f.nom}</h3><p>Tel: ${f.telephone}</p></div></div>` }) }
 }
 
+// DASHBOARD
 async function dashboardFournisseur(id, nom){
     fournisseurConnecteID = id;
     document.getElementById('popup').classList.add('active');
@@ -58,11 +64,11 @@ async function dashboardFournisseur(id, nom){
     const { data: msgs } = await _supabase.from('messages').select('nom_client').eq('fournisseur_id', id);
     let clientsUnique = [...new Set(msgs?.map(m => m.nom_client))];
     let listDiv = document.getElementById('client-list');
-    listDiv.innerHTML = clientsUnique.length ? "" : "Aucun message";
+    listDiv.innerHTML = (clientsUnique.length === 0) ? "Aucun message" : "";
     clientsUnique.forEach(client => { listDiv.innerHTML += `<div class="msg-client" onclick="openChatRoom('${id}', '${client}', 'fournisseur')">Discussion avec ${client}</div>`; });
 }
 
-// PUBLIER ARTICLE AVEC IMAGE DU TÉLÉPHONE
+// PUBLIER ARTICLE AVEC PHOTO DU TÉLÉPHONE
 function openFormArticle(){
     let options = categories.map(c=>`<option>${c}</option>`).join('');
     document.getElementById('popup-content').innerHTML = `<h3>Nouveau</h3>
@@ -79,23 +85,13 @@ async function publierArticle(){
     const nom = document.getElementById('art-nom').value;
     const prix = document.getElementById('art-prix').value;
     const cat = document.getElementById('art-cat').value;
-    
     if(!file || !nom || !prix) { alert("Remplissez tout et choisissez une image"); return; }
-    
-    document.getElementById('btn-publier').innerText = "Envoi en cours...";
-    
-    // 1. Upload de l'image vers Supabase Storage
+    document.getElementById('btn-publier').innerText = "Envoi...";
     const fileName = Date.now() + "_" + file.name;
     const { data: uploadData, error: uploadError } = await _supabase.storage.from('images').upload(fileName, file);
-    
     if(uploadError) { alert("Erreur image: " + uploadError.message); return; }
-    
-    // 2. Récupérer l'URL publique
     const { data: urlData } = _supabase.storage.from('images').getPublicUrl(fileName);
-    const image_url = urlData.publicUrl;
-
-    // 3. Enregistrer l'article
-    await _supabase.from('articles').insert([{ nom, prix, categorie: cat, image_url, fournisseur_id: fournisseurConnecteID }]);
+    await _supabase.from('articles').insert([{ nom, prix, categorie: cat, image_url: urlData.publicUrl, fournisseur_id: fournisseurConnecteID }]);
     alert("Publié !");
     closePopup();
     loadArticles();
@@ -103,34 +99,57 @@ async function publierArticle(){
 
 // CATEGORIES : AFFICHE TOUT PAR DÉFAUT
 function loadCategories(){
-    let side = document.getElementById('sidebar-cat'); side.innerHTML='';
+    let side = document.getElementById('sidebar-cat'); 
+    side.innerHTML='<div onclick="filterCat(\'TOUT\',this)" class="active">TOUT</div>';
     categories.forEach((c)=>{ side.innerHTML += `<div onclick="filterCat('${c}',this)">${c}</div>`; });
-    filterCat("TOUT", null); // Charge tout au début
+    filterCat("TOUT", side.children[0]);
 }
 
 async function filterCat(cat, el){
     document.querySelectorAll('.sidebar div').forEach(d=>d.classList.remove('active'));
     if(el) el.classList.add('active');
-    
     let grid = document.getElementById('cat-products'); grid.innerHTML='Chargement...';
-    
     let query = _supabase.from('articles').select('*');
     if(cat !== "TOUT") query = query.eq('categorie', cat);
-    
     const { data: filtered } = await query;
     grid.innerHTML='';
-    if(filtered) { filtered.forEach(a=>{ grid.innerHTML += `<div class="card" onclick="openPopup('${a.nom}','${a.prix}','${a.image_url}')"><img src="${a.image_url}"><h4>${a.nom}</h4><p>${a.prix}</p></div>` }); }
+    if(filtered) { filtered.forEach(a=>{ grid.innerHTML += `<div class="card" onclick="openPopup('${a.nom.replace(/'/g, "\\'")}','${a.prix}','${a.image_url}')"><img src="${a.image_url}"><h4>${a.nom}</h4><p>${a.prix}</p></div>` }); }
 }
 
-// CHAT STYLE GAUCHE / DROITE
+// CHAT "SUR LE SITE"
+async function openChatList(){
+    document.getElementById('popup').classList.add('active');
+    document.getElementById('popup-content').innerHTML = "<h3>Chargement des fournisseurs...</h3>";
+    
+    const { data, error } = await _supabase.from('fournisseurs').select('*');
+    
+    if(error) { alert("Erreur : " + error.message); return; }
+    
+    let html = '<h3>Choisir un fournisseur</h3>';
+    if(!data || data.length === 0) {
+        html += "<p>Aucun fournisseur inscrit pour le moment.</p>";
+    } else {
+        data.forEach((f)=>{ 
+            html += `<div class="fournisseur" onclick="clientInitialiseChat('${f.id}', '${f.nom.replace(/'/g, "\\'")}')"><img><div><h3>${f.nom}</h3></div></div>`; 
+        });
+    }
+    document.getElementById('popup-content').innerHTML = html;
+}
+
+function clientInitialiseChat(fId, fNom){
+    let nomC = prompt("Ton nom pour discuter avec " + fNom + " :");
+    if(nomC) openChatRoom(fId, nomC, 'client');
+}
+
 async function openChatRoom(fId, clientNom, role){
     fournisseurConnecteID = fId;
     let expediteurNom = (role === 'client') ? clientNom : "Fournisseur";
     
-    document.getElementById('popup-content').innerHTML = `<h3>Discussion</h3><div id="chat-box" class="msg-container" style="height:350px; overflow-y:auto; background:#f0f2f5; padding:15px; margin:10px 0; border-radius:10px;"></div><div style="display:flex; gap:5px;"><input type="text" id="msg-input" placeholder="Message..."><button onclick="envoyerMessage('${clientNom}', '${expediteurNom}')">Envoyer</button></div>`;
+    document.getElementById('popup-content').innerHTML = `<h3>Chat: ${clientNom}</h3><div id="chat-box" class="msg-container" style="height:350px; overflow-y:auto; background:#f0f2f5; padding:15px; margin:10px 0; border-radius:10px;"></div><div style="display:flex; gap:5px;"><input type="text" id="msg-input" placeholder="Message..."><button onclick="envoyerMessage('${clientNom}', '${expediteurNom}')">Envoyer</button></div>`;
     
     const refreshing = () => loadMessages(fId, clientNom);
     refreshing();
+    if(window.chatInterval) clearInterval(window.chatInterval);
     window.chatInterval = setInterval(refreshing, 3000);
 }
 
