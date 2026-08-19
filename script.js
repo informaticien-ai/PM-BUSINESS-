@@ -119,7 +119,6 @@ async function loadMessages(fId, clientNom){
     }
 }
 
-// (Le reste des fonctions inscription, loadFournisseurs, loadCategories reste identique au précédent)
 async function inscription(){
     let nom = document.getElementById('nom').value;
     let tel = document.getElementById('tel').value;
@@ -127,11 +126,22 @@ async function inscription(){
     const { error } = await _supabase.from('fournisseurs').insert([{ nom, telephone: tel, email: document.getElementById('email').value, pays: document.getElementById('pays').value }]);
     if(!error) { alert("Inscription réussie"); closeForm(); loadFournisseurs(); }
 }
+
 async function loadFournisseurs(){
     let list = document.getElementById('liste-fournisseurs'); list.innerHTML='';
     const { data } = await _supabase.from('fournisseurs').select('*');
+    
+    // MASQUER LE BOUTON SI 3 FOURNISSEURS OU PLUS
+    let btnInscrire = document.querySelector('.btn-inscrire');
+    if (data && data.length >= 3) {
+        if (btnInscrire) btnInscrire.style.display = 'none';
+    } else {
+        if (btnInscrire) btnInscrire.style.display = 'block';
+    }
+
     if(data) { data.forEach((f)=>{ list.innerHTML += `<div class="fournisseur" onclick="dashboardFournisseur('${f.id}', '${f.nom.replace(/'/g, "\\'")}')"><img><div><h3>${f.nom}</h3><p>Tel: ${f.telephone}</p></div></div>` }) }
 }
+
 async function dashboardFournisseur(id, nom){
     fournisseurConnecteID = id;
     document.getElementById('popup').classList.add('active');
