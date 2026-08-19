@@ -115,3 +115,35 @@ footer div.active i { color: var(--rouge) !important; }
 /* --- LISTE FOURNISSEURS --- */
 .fournisseur { display: flex; gap: 15px; background: white; padding: 15px; border-radius: 15px; margin-bottom: 15px; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 .fournisseur img { width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--jaune); object-fit: cover; background: #eee; }
+
+/* --- CODE POUR LES BOUTONS MESSAGE --- */
+.choix-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+    padding: 0 20px;
+}
+
+.choix-btn a {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px;
+    border-radius: 15px;
+    text-decoration: none !important;
+    font-weight: 700;
+    color: white !important;
+    font-size: 1rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.btn-wa {
+    background-color: #25D366 !important; /* Vert WhatsApp */
+}
+
+.btn-site {
+    background-color: #00468c !important; /* Bleu PM Business */
+    border: 3px solid #ffcc00 !important; /* Bordure Jaune */
+}
