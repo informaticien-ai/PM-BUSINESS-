@@ -12,12 +12,16 @@
 <body>
 
 <header id="main-header">
-    <div class="logo"><span>P</span><span>M</span> <span>BUSINESS</span></div>
-    <div class="search" id="search-bar"><input type="text" placeholder="Rechercher un produit"></div>
+    <div class="header-top">
+        <div class="logo"><span>PM</span><span> BUSINESS</span></div>
+        <div class="search" id="search-bar">
+            <input type="text" placeholder="🔍 Recherche un produit">
+        </div>
+    </div>
     <div class="nav">
-        <button class="active" onclick="showPage('articles')">Articles</button>
-        <button onclick="showPage('fournisseurs')">Fournisseurs</button>
-        <button onclick="showPage('categories')">Catégories</button>
+        <button class="active" onclick="showPage('articles', this)">Articles</button>
+        <button onclick="showPage('fournisseurs', this)">Fournisseur</button>
+        <button onclick="showPage('categories', this)">Catégories</button>
     </div>
 </header>
 
