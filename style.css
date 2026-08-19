@@ -9,7 +9,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 body { background: var(--gris); }
 
-/* --- HEADER (DESIGN IMAGE) --- */
+/* --- HEADER (DESIGN VALIDÉ) --- */
 header {
     position: fixed; top: 0; left: 0; right: 0;
     background: white; z-index: 1000;
@@ -27,59 +27,56 @@ header {
 }
 .nav { display: flex; justify-content: space-around; padding-top: 5px; }
 .nav button { background: none; border: 1px solid transparent; font-weight: 700; font-size: 0.9rem; color: #666; padding: 8px 18px; cursor: pointer; }
-.nav button.active { color: var(--bleu); background: white; border-radius: 15px; border: 1px solid #eee; box-shadow: 0 4px 0px var(--jaune); }
+.nav button.active {
+    color: var(--bleu); background: white; border-radius: 15px;
+    border: 1px solid #eee; box-shadow: 0 4px 0px var(--jaune);
+}
 
-/* --- PAGES & GRILLE --- */
-.page { display: none; padding-top: 140px; padding-bottom: 120px; }
+/* --- PAGES (ESPACE POUR LE FOOTER) --- */
+.page { 
+    display: none; 
+    padding-top: 150px; 
+    padding-bottom: 150px; /* Plus d'espace pour que le footer ne cache rien */
+}
 .page.active { display: block; }
 .container { padding: 15px; }
 
-.grid-3 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 10px; }
+/* --- RÉPARATION DU BOUTON S'INSCRIRE --- */
+.btn-inscrire {
+    background: var(--bleu) !important;
+    color: white !important;
+    padding: 15px !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    margin-bottom: 25px !important;
+    cursor: pointer !important;
+    width: 100% !important;
+    display: block !important;
+    font-size: 1rem !important;
+    text-align: center;
+}
+
+/* --- GRILLE ARTICLES --- */
+.grid-3 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; padding: 10px; }
 .card { background: white; border-radius: 15px; padding: 10px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
 .card img { width: 100%; height: 180px; border-radius: 10px; object-fit: contain; background: #fdfdfd; margin-bottom: 8px; }
 .card h4 { font-size: 0.85rem; color: #333; margin-bottom: 5px; }
 .card p { color: var(--rouge); font-weight: 800; font-size: 1rem; }
 
-/* --- RÉPARATION STYLE BOUTONS MESSAGE --- */
-.choix-btn { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; padding: 0 10px; }
-.choix-btn a { 
-    display: flex !important; align-items: center; justify-content: center; 
-    gap: 10px; padding: 15px; border-radius: 15px; 
-    text-decoration: none !important; font-weight: 700; color: white !important;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-.btn-wa { background-color: var(--vert) !important; }
-.btn-site { background-color: var(--bleu) !important; border: 2px solid var(--jaune); }
+/* --- CATÉGORIES --- */
+.categories { display: flex; height: calc(100vh - 280px); }
+.sidebar { width: 35%; background: white; overflow-y: auto; padding: 10px; border-right: 3px solid var(--jaune); }
+.sidebar div { padding: 12px 8px; font-weight: 600; cursor: pointer; border-radius: 8px; margin-bottom: 10px; font-size: 0.85rem; }
+.sidebar div.active { background: var(--jaune); color: var(--bleu); }
+.products { width: 65%; padding: 10px; overflow-y: auto; }
+.grid-2 { display: grid; grid-template-columns: 1fr; gap: 25px; }
 
-/* --- RÉPARATION STYLE FORMULAIRES & POPUPS --- */
-.popup { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
-.popup.active { display: flex; }
-.popup-content { background: white; padding: 25px; border-radius: 20px; width: 100%; max-width: 400px; position: relative; max-height: 90vh; overflow-y: auto; text-align: center; }
-.close { position: absolute; top: 10px; right: 15px; font-size: 2rem; color: #999; cursor: pointer; }
+/* --- FOURNISSEURS --- */
+.fournisseur { display: flex; gap: 15px; background: white; padding: 15px; border-radius: 15px; margin-bottom: 15px; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+.fournisseur img { width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--jaune); object-fit: cover; background: #eee; }
 
-/* Inputs et boutons à l'intérieur des popups */
-.popup-content input, .popup-content select, .form-popup input {
-    width: 100%; padding: 12px; margin-bottom: 12px;
-    border: 1px solid #ddd; border-radius: 10px; background: #f9f9f9;
-    font-family: inherit; font-size: 14px; outline: none;
-}
-.popup-content button, .form-popup button, .dash-btn {
-    background: var(--bleu); color: white; border: none; padding: 14px;
-    width: 100%; border-radius: 10px; font-weight: 700; cursor: pointer;
-    margin-top: 5px; font-size: 15px;
-}
-.msg-client-btn { /* Boutons dans le dashboard fournisseur */
-    background: var(--bleu); color: white; padding: 12px; 
-    border-radius: 10px; margin-top: 8px; cursor: pointer; font-weight: 600;
-}
-
-/* --- CHAT --- */
-.msg-container { display: flex; flex-direction: column; gap: 10px; background: #f2f2f2; padding: 15px; border-radius: 15px; height: 300px; overflow-y: auto; margin-bottom: 10px; }
-.msg-bubble { max-width: 80%; padding: 10px; border-radius: 15px; font-size: 14px; text-align: left; }
-.msg-client { align-self: flex-end; background: var(--bleu); color: white; border-bottom-right-radius: 2px; }
-.msg-fournisseur { align-self: flex-start; background: white; color: #333; border: 1px solid #ddd; border-bottom-left-radius: 2px; }
-
-/* --- NOUVEAU FOOTER --- */
+/* --- FOOTER (DESIGN VALIDÉ) --- */
 footer {
     position: fixed; bottom: 20px; left: 20px; right: 20px;
     height: 85px; background: white; display: flex; 
@@ -87,15 +84,18 @@ footer {
     border-radius: 50px; border-top: 5px solid var(--jaune); 
     box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 1000;
 }
-footer div { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; color: #888; transition: 0.3s; }
+footer div { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; color: #888; }
 footer div i { font-size: 1.6rem; }
 footer div span { font-size: 0.85rem; font-weight: 700; }
 footer div.active { color: var(--bleu) !important; } 
 footer div.active i { color: var(--rouge) !important; }
 
-/* --- AUTRES --- */
-.sidebar { width: 35%; background: white; overflow-y: auto; padding: 15px; border-right: 3px solid var(--jaune); }
-.sidebar div { padding: 10px; font-weight: 600; cursor: pointer; border-radius: 8px; margin-bottom: 10px; }
-.sidebar div.active { background: var(--jaune); color: var(--bleu); }
-.fournisseur { display: flex; gap: 15px; background: white; padding: 15px; border-radius: 15px; margin-bottom: 15px; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-.fournisseur img { width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--jaune); object-fit: cover; }
+/* --- POPUPS ET CHAT --- */
+.popup { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
+.popup.active { display: flex; }
+.popup-content { background: white; padding: 25px; border-radius: 20px; width: 100%; max-width: 400px; position: relative; max-height: 90vh; overflow-y: auto; text-align: center; }
+.close { position: absolute; top: 10px; right: 15px; font-size: 2rem; color: #999; cursor: pointer; }
+.msg-container { display: flex; flex-direction: column; gap: 10px; background: #f2f2f2; padding: 15px; border-radius: 15px; height: 300px; overflow-y: auto; margin-bottom: 10px; }
+.msg-bubble { max-width: 80%; padding: 10px; border-radius: 15px; font-size: 14px; text-align: left; }
+.msg-client { align-self: flex-end; background: var(--bleu); color: white; border-bottom-right-radius: 2px; }
+.msg-fournisseur { align-self: flex-start; background: white; color: #333; border: 1px solid #ddd; border-bottom-left-radius: 2px; }
