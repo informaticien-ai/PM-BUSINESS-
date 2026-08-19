@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PM BUSINESS</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+    <!-- Bibliothèque pour les icônes du footer -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- SDK Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="style.css">
@@ -45,9 +47,18 @@
 </div></div>
 
 <footer id="main-footer">
-    <div class="active" onclick="showPage('articles', this)">Accueil</div>
-    <div onclick="showPage('message', this)">Message</div>
-    <div onclick="showPage('apropos', this)">À propos</div>
+    <div class="active" onclick="showPage('articles', this)">
+        <i class="fas fa-home"></i>
+        <span>Accueil</span>
+    </div>
+    <div onclick="showPage('message', this)">
+        <i class="fas fa-comment-dots"></i>
+        <span>Message</span>
+    </div>
+    <div onclick="showPage('apropos', this)">
+        <i class="fas fa-info-circle"></i>
+        <span>À propos</span>
+    </div>
 </footer>
 
 <script src="script.js"></script>
