@@ -8,22 +8,17 @@ let fournisseurConnecteID = null;
 async function showPage(id, el){
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    
-    // Afficher/Cacher la barre de recherche seulement sur la page articles
     const searchBar = document.getElementById('search-bar');
     if(id === 'articles'){ searchBar.classList.add('show'); } 
     else { searchBar.classList.remove('show'); }
-
     document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
     document.querySelectorAll('footer div').forEach(b=>b.classList.remove('active'));
-    
     if(el) el.classList.add('active');
     if(id==='categories') loadCategories();
     if(id==='articles') loadArticles();
     if(id==='fournisseurs') loadFournisseurs();
 }
 
-// ARTICLES
 async function loadArticles(){
     let grid = document.getElementById('articles-grid'); 
     grid.innerHTML='<p style="text-align:center;width:100%;">Chargement...</p>';
@@ -54,12 +49,10 @@ function closePopup(){
     if(window.chatInterval) clearInterval(window.chatInterval);
 }
 
-// INSCRIPTION
 async function inscription(){
     const photoFile = document.getElementById('fourni-photo').files[0];
     const nom = document.getElementById('nom').value;
     const tel = document.getElementById('tel').value;
-    const email = document.getElementById('email').value;
     const pays = document.getElementById('pays').value;
     const btn = document.querySelector('.popup-content button[onclick="inscription()"]');
 
@@ -74,7 +67,7 @@ async function inscription(){
         await _supabase.storage.from('images').upload(fileName, photoFile);
         const { data: urlData } = _supabase.storage.from('images').getPublicUrl(fileName);
 
-        const { data: result, error: insertError } = await _supabase.from('fournisseurs').insert([{ nom, telephone: tel, email, pays, photo_url: urlData.publicUrl }]).select();
+        const { data: result, error: insertError } = await _supabase.from('fournisseurs').insert([{ nom, telephone: tel, pays, photo_url: urlData.publicUrl }]).select();
         if(!insertError) { 
             localStorage.setItem('mon_id_fournisseur', result[0].id);
             alert("Inscription réussie !"); closeForm(); loadFournisseurs(); 
@@ -83,7 +76,6 @@ async function inscription(){
     finally { btn.innerText = "Valider"; btn.disabled = false; }
 }
 
-// CHARGER FOURNISSEURS
 async function loadFournisseurs(){
     let list = document.getElementById('liste-fournisseurs'); list.innerHTML='';
     const { data } = await _supabase.from('fournisseurs').select('*');
@@ -108,14 +100,27 @@ async function dashboardFournisseur(id, nom){
         listDiv.innerHTML = (clientsUnique.length === 0) ? "Aucun message" : "";
         clientsUnique.forEach(client => { listDiv.innerHTML += `<div class="msg-client" style="cursor:pointer; margin-top:10px;" onclick="openChatRoom('${id}', '${client}', 'fournisseur')">Discussion avec ${client}</div>`; });
     } else {
-        document.getElementById('popup-content').innerHTML = `<span class="close" onclick="closePopup()">×</span><h3>Vendeur : ${nom}</h3><p style="margin:20px 0;">Discutez avec ce vendeur pour passer commande.</p><button onclick="clientInitialiseChat('${id}', '${nom}')">💬 Lui envoyer un message</button><hr style="margin:20px 0; opacity:0.1;"><button style="background:#777; font-size:11px; padding:8px;" onclick="connexionFournisseur('${id}')">Accès Propriétaire</button>`;
+        document.getElementById('popup-content').innerHTML = `<span class="close" onclick="closePopup()">×</span><h3>Vendeur : ${nom}</h3><p style="margin:20px 0;">Discutez avec ce vendeur pour passer commande.</p><button onclick="demanderNomClient('${id}', '${nom}')">💬 Lui envoyer un message</button><hr style="margin:20px 0; opacity:0.1;"><button style="background:#777; font-size:11px; padding:8px;" onclick="connexionFournisseur('${id}')">Accès Propriétaire</button>`;
     }
 }
 
+// REMPLACE LE PROMPT DE CONNEXION
 async function connexionFournisseur(id){
-    let tel = prompt("Numéro de téléphone :");
+    document.getElementById('popup-content').innerHTML = `
+        <span class="close" onclick="closePopup()">×</span>
+        <h3>Connexion</h3>
+        <input type="tel" id="confirm-tel" placeholder="Votre numéro de téléphone">
+        <button onclick="verifierConnexion('${id}')">Confirmer</button>`;
+}
+
+async function verifierConnexion(id){
+    let tel = document.getElementById('confirm-tel').value;
     const { data: f } = await _supabase.from('fournisseurs').select('*').eq('id', id).single();
-    if(f && f.telephone === tel){ localStorage.setItem('mon_id_fournisseur', id); alert("Connecté !"); dashboardFournisseur(id, f.nom); }
+    if(f && f.telephone === tel){ 
+        localStorage.setItem('mon_id_fournisseur', id); 
+        alert("Connecté !"); 
+        dashboardFournisseur(id, f.nom); 
+    } else { alert("Numéro incorrect."); }
 }
 
 function openFormArticle(){
@@ -133,27 +138,33 @@ async function publierArticle(){
     alert("Publié !"); closePopup(); loadArticles();
 }
 
-// CHAT "SUR LE SITE" (BOUTON RÉPARÉ)
 async function openChatList(event){
-    if(event) event.preventDefault(); // Empêche le comportement par défaut du lien
+    if(event) event.preventDefault();
     document.getElementById('popup').classList.add('active');
     document.getElementById('popup-content').innerHTML = "<h3>Chargement...</h3>";
     const { data } = await _supabase.from('fournisseurs').select('*');
     let html = '<span class="close" onclick="closePopup()">×</span><h3>Choisir un vendeur</h3>';
     if(data && data.length > 0) { 
-        data.forEach((f)=>{ html += `<div class="fournisseur" onclick="clientInitialiseChat('${f.id}', '${f.nom.replace(/'/g, "\\'")}')"><img src="${f.photo_url || ''}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;"><div><h3>${f.nom}</h3></div></div>`; }); 
-    } else {
-        html += "<p>Aucun fournisseur disponible.</p>";
-    }
+        data.forEach((f)=>{ html += `<div class="fournisseur" onclick="demanderNomClient('${f.id}', '${f.nom.replace(/'/g, "\\'")}')"><img src="${f.photo_url || ''}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;"><div><h3>${f.nom}</h3></div></div>`; }); 
+    } else { html += "<p>Aucun fournisseur disponible.</p>"; }
     document.getElementById('popup-content').innerHTML = html;
 }
 
-function clientInitialiseChat(fId, fNom){
-    let nomC = prompt("Ton nom pour discuter :");
+// REMPLACE LE PROMPT DE NOM CLIENT
+function demanderNomClient(fId, fNom){
+    document.getElementById('popup-content').innerHTML = `
+        <span class="close" onclick="closePopup()">×</span>
+        <h3>Votre Nom</h3>
+        <p>Entrez votre nom pour discuter avec ${fNom} :</p>
+        <input type="text" id="client-pseudo" placeholder="Ex: Jean">
+        <button onclick="lancerChat('${fId}')">Commencer</button>`;
+}
+
+function lancerChat(fId){
+    let nomC = document.getElementById('client-pseudo').value;
     if(nomC) openChatRoom(fId, nomC, 'client');
 }
 
-// RECHERCHE
 document.querySelector('#search-bar input').addEventListener('input', (e) => {
     let searchVal = e.target.value.toLowerCase();
     let allCards = document.querySelectorAll('.card');
@@ -163,7 +174,6 @@ document.querySelector('#search-bar input').addEventListener('input', (e) => {
     });
 });
 
-// CATEGORIES
 function loadCategories(){
     let side = document.getElementById('sidebar-cat'); 
     side.innerHTML='<div onclick="filterCat(\'TOUT\',this)" class="active">TOUT</div>';
@@ -179,13 +189,17 @@ async function filterCat(cat, el){
     if(cat !== "TOUT") query = query.eq('categorie', cat);
     const { data: filtered } = await query;
     grid.innerHTML='';
-    if(filtered) { filtered.forEach(a=>{ grid.innerHTML += `<div class="card" onclick="openPopup('${a.nom.replace(/'/g, "\\'")}','${a.prix}','${a.image_url}')"><img src="${a.image_url}"><h4>${a.nom}</h4><div class="price-container"><p>${a.prix}</p><span class="btn-panier" onclick="event.stopPropagation(); showPage('message', document.querySelectorAll('footer div')[1])">🛒</span></div></div>` }); }
+    if(filtered) { 
+        filtered.forEach(a=>{ 
+            grid.innerHTML += `<div class="card" onclick="openPopup('${a.nom.replace(/'/g, "\\'")}','${a.prix}','${a.image_url}')"><img src="${a.image_url}"><h4>${a.nom}</h4><div class="price-container"><p>${a.prix}</p><span class="btn-panier" onclick="event.stopPropagation(); showPage('message', document.querySelectorAll('footer div')[1])">🛒</span></div></div>` 
+        }); 
+    }
 }
 
 async function openChatRoom(fId, clientNom, role){
     fournisseurConnecteID = fId;
     let expediteurNom = (role === 'client') ? clientNom : "Fournisseur";
-    document.getElementById('popup-content').innerHTML = `<span class="close" onclick="closePopup()">×</span><h3>Chat</h3><div id="chat-box" class="msg-container" style="height:300px; overflow-y:auto;"></div><div class="chat-input-area"><input type="text" id="msg-input" placeholder="Message..."><button onclick="envoyerMessage('${clientNom}', '${expediteurNom}')">➤</button></div>`;
+    document.getElementById('popup-content').innerHTML = `<span class="close" onclick="closePopup()">×</span><h3 style="margin-bottom:10px;">Chat</h3><div id="chat-box" class="msg-container" style="height:300px; overflow-y:auto;"></div><div class="chat-input-area"><input type="text" id="msg-input" placeholder="Message..."><button onclick="envoyerMessage('${clientNom}', '${expediteurNom}')">➤</button></div>`;
     loadMessages(fId, clientNom);
     if(window.chatInterval) clearInterval(window.chatInterval);
     window.chatInterval = setInterval(() => loadMessages(fId, clientNom), 3000);
