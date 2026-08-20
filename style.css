@@ -48,12 +48,37 @@ h2.titre { text-align: center; margin-bottom: 20px; color: var(--bleu); }
 .card h4 { font-size: 0.85rem; color: #333; margin-bottom: 5px; }
 .card p { color: var(--rouge); font-weight: 800; font-size: 1rem; }
 
+/* --- STYLE DU PANIER 🛒 --- */
+.price-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 5px;
+}
+.btn-panier {
+    background: var(--bleu);
+    color: white;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(0, 70, 140, 0.3);
+    transition: 0.2s;
+}
+.btn-panier:active { transform: scale(1.2); }
+
 /* --- BOUTONS MESSAGES (WHATSAPP / SITE) --- */
 .choix-btn { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; padding: 0 10px; }
 .choix-btn a { 
     display: flex !important; align-items: center; justify-content: center; 
     gap: 10px; padding: 15px; border-radius: 15px; 
     text-decoration: none !important; font-weight: 700; color: white !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 .btn-wa { background-color: var(--vert) !important; }
 .btn-site { background-color: var(--bleu) !important; border: 2px solid var(--jaune); }
@@ -115,35 +140,3 @@ footer div.active i { color: var(--rouge) !important; }
 /* --- LISTE FOURNISSEURS --- */
 .fournisseur { display: flex; gap: 15px; background: white; padding: 15px; border-radius: 15px; margin-bottom: 15px; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 .fournisseur img { width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--jaune); object-fit: cover; background: #eee; }
-
-/* --- CODE POUR LES BOUTONS MESSAGE --- */
-.choix-btn {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-top: 20px;
-    padding: 0 20px;
-}
-
-.choix-btn a {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 15px;
-    border-radius: 15px;
-    text-decoration: none !important;
-    font-weight: 700;
-    color: white !important;
-    font-size: 1rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.btn-wa {
-    background-color: #25D366 !important; /* Vert WhatsApp */
-}
-
-.btn-site {
-    background-color: #00468c !important; /* Bleu PM Business */
-    border: 3px solid #ffcc00 !important; /* Bordure Jaune */
-}
