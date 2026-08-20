@@ -8,16 +8,22 @@ let fournisseurConnecteID = null;
 async function showPage(id, el){
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    if(id === 'articles'){document.getElementById('search-bar').classList.add('show');} else {document.getElementById('search-bar').classList.remove('show');}
+    
+    // Afficher/Cacher la barre de recherche seulement sur la page articles
+    const searchBar = document.getElementById('search-bar');
+    if(id === 'articles'){ searchBar.classList.add('show'); } 
+    else { searchBar.classList.remove('show'); }
+
     document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
     document.querySelectorAll('footer div').forEach(b=>b.classList.remove('active'));
+    
     if(el) el.classList.add('active');
     if(id==='categories') loadCategories();
     if(id==='articles') loadArticles();
     if(id==='fournisseurs') loadFournisseurs();
 }
 
-// ARTICLES AVEC PANIER 🛒
+// ARTICLES
 async function loadArticles(){
     let grid = document.getElementById('articles-grid'); 
     grid.innerHTML='<p style="text-align:center;width:100%;">Chargement...</p>';
@@ -58,40 +64,31 @@ async function inscription(){
     const btn = document.querySelector('.popup-content button[onclick="inscription()"]');
 
     if(!nom || !tel || !photoFile){ alert("Veuillez remplir le nom, le téléphone et choisir une photo."); return; }
-
-    btn.innerText = "Patientez...";
-    btn.disabled = true;
+    btn.innerText = "Patientez..."; btn.disabled = true;
 
     try {
         const { data: countData } = await _supabase.from('fournisseurs').select('id');
-        if(countData && countData.length >= 3){ alert("Limite de 3 fournisseurs atteinte."); btn.innerText = "Valider"; btn.disabled = false; return; }
+        if(countData && countData.length >= 3){ alert("Limite de 3 fournisseurs atteinte."); return; }
 
         const fileName = "fourni_" + Date.now() + "_" + photoFile.name;
-        const { error: uploadError } = await _supabase.storage.from('images').upload(fileName, photoFile);
-        if(uploadError) throw uploadError;
-
+        await _supabase.storage.from('images').upload(fileName, photoFile);
         const { data: urlData } = _supabase.storage.from('images').getPublicUrl(fileName);
-        const photoUrl = urlData.publicUrl;
 
-        const { data: result, error: insertError } = await _supabase.from('fournisseurs').insert([{ nom, telephone: tel, email, pays, photo_url: photoUrl }]).select();
-        if(insertError) throw insertError;
-
-        if(result && result.length > 0) { 
+        const { data: result, error: insertError } = await _supabase.from('fournisseurs').insert([{ nom, telephone: tel, email, pays, photo_url: urlData.publicUrl }]).select();
+        if(!insertError) { 
             localStorage.setItem('mon_id_fournisseur', result[0].id);
-            alert("Félicitations ! Inscription réussie."); 
-            closeForm(); 
-            loadFournisseurs(); 
+            alert("Inscription réussie !"); closeForm(); loadFournisseurs(); 
         }
-    } catch (err) { alert("Erreur : " + err.message); } finally { btn.innerText = "Valider"; btn.disabled = false; }
+    } catch (err) { alert("Erreur : " + err.message); } 
+    finally { btn.innerText = "Valider"; btn.disabled = false; }
 }
 
-// CHARGER LES FOURNISSEURS
+// CHARGER FOURNISSEURS
 async function loadFournisseurs(){
     let list = document.getElementById('liste-fournisseurs'); list.innerHTML='';
     const { data } = await _supabase.from('fournisseurs').select('*');
     let btnInscrire = document.querySelector('.btn-inscrire');
     if (data && data.length >= 3) { if (btnInscrire) btnInscrire.style.setProperty('display', 'none', 'important'); }
-    list.innerHTML='';
     if(data) {
         data.forEach((f)=>{
             list.innerHTML += `<div class="fournisseur" onclick="dashboardFournisseur('${f.id}', '${f.nom.replace(/'/g, "\\'")}')"><img src="${f.photo_url || ''}" style="width:65px; height:65px; border-radius:50%; object-fit:cover; border:3px solid var(--jaune);"><div><h3>${f.nom}</h3><p>Vendeur PM Business</p></div></div>`
@@ -116,10 +113,9 @@ async function dashboardFournisseur(id, nom){
 }
 
 async function connexionFournisseur(id){
-    let tel = prompt("Entrez votre numéro de téléphone :");
-    if(!tel) return;
+    let tel = prompt("Numéro de téléphone :");
     const { data: f } = await _supabase.from('fournisseurs').select('*').eq('id', id).single();
-    if(f && f.telephone === tel){ localStorage.setItem('mon_id_fournisseur', id); alert("Connecté !"); dashboardFournisseur(id, f.nom); } else { alert("Erreur."); }
+    if(f && f.telephone === tel){ localStorage.setItem('mon_id_fournisseur', id); alert("Connecté !"); dashboardFournisseur(id, f.nom); }
 }
 
 function openFormArticle(){
@@ -130,7 +126,6 @@ function openFormArticle(){
 async function publierArticle(){
     const file = document.getElementById('art-file').files[0];
     if(!file) return;
-    document.getElementById('btn-publier').innerText = "Envoi...";
     const fileName = Date.now() + "_" + file.name;
     await _supabase.storage.from('images').upload(fileName, file);
     const { data: urlData } = _supabase.storage.from('images').getPublicUrl(fileName);
@@ -138,21 +133,37 @@ async function publierArticle(){
     alert("Publié !"); closePopup(); loadArticles();
 }
 
-// RECHERCHE (FONCTION CORRIGÉE)
+// CHAT "SUR LE SITE" (BOUTON RÉPARÉ)
+async function openChatList(event){
+    if(event) event.preventDefault(); // Empêche le comportement par défaut du lien
+    document.getElementById('popup').classList.add('active');
+    document.getElementById('popup-content').innerHTML = "<h3>Chargement...</h3>";
+    const { data } = await _supabase.from('fournisseurs').select('*');
+    let html = '<span class="close" onclick="closePopup()">×</span><h3>Choisir un vendeur</h3>';
+    if(data && data.length > 0) { 
+        data.forEach((f)=>{ html += `<div class="fournisseur" onclick="clientInitialiseChat('${f.id}', '${f.nom.replace(/'/g, "\\'")}')"><img src="${f.photo_url || ''}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;"><div><h3>${f.nom}</h3></div></div>`; }); 
+    } else {
+        html += "<p>Aucun fournisseur disponible.</p>";
+    }
+    document.getElementById('popup-content').innerHTML = html;
+}
+
+function clientInitialiseChat(fId, fNom){
+    let nomC = prompt("Ton nom pour discuter :");
+    if(nomC) openChatRoom(fId, nomC, 'client');
+}
+
+// RECHERCHE
 document.querySelector('#search-bar input').addEventListener('input', (e) => {
     let searchVal = e.target.value.toLowerCase();
     let allCards = document.querySelectorAll('.card');
-    
     allCards.forEach(card => {
         let productName = card.querySelector('h4').innerText.toLowerCase();
-        if(productName.includes(searchVal)) {
-            card.style.display = "block";
-        } else {
-            card.style.display = "none";
-        }
+        card.style.display = productName.includes(searchVal) ? "block" : "none";
     });
 });
 
+// CATEGORIES
 function loadCategories(){
     let side = document.getElementById('sidebar-cat'); 
     side.innerHTML='<div onclick="filterCat(\'TOUT\',this)" class="active">TOUT</div>';
