@@ -17,7 +17,6 @@ async function showPage(id, el){
     if(id==='fournisseurs') loadFournisseurs();
 }
 
-// ARTICLES
 async function loadArticles(){
     let grid = document.getElementById('articles-grid'); 
     grid.innerHTML='<p style="text-align:center;width:100%;">Chargement...</p>';
@@ -40,7 +39,6 @@ function closePopup(){
     if(window.chatInterval) clearInterval(window.chatInterval);
 }
 
-// PUBLIER
 function openFormArticle(){
     let options = categories.map(c=>`<option>${c}</option>`).join('');
     document.getElementById('popup-content').innerHTML = `
@@ -59,28 +57,21 @@ async function publierArticle(){
     const nom = document.getElementById('art-nom').value;
     const prix = document.getElementById('art-prix').value;
     if(!file || !nom || !prix) { alert("Veuillez remplir tous les champs"); return; }
-    
     document.getElementById('btn-publier').innerText = "Téléchargement...";
     document.getElementById('btn-publier').disabled = true;
-
     const fileName = Date.now() + "_" + file.name;
     const { data: uploadData, error: uploadError } = await _supabase.storage.from('images').upload(fileName, file);
-    
     if(uploadError) { alert("Erreur : " + uploadError.message); return; }
-    
     const { data: urlData } = _supabase.storage.from('images').getPublicUrl(fileName);
     await _supabase.from('articles').insert([{ nom, prix, categorie: document.getElementById('art-cat').value, image_url: urlData.publicUrl, fournisseur_id: fournisseurConnecteID }]);
-    
     alert("Article en ligne !");
     closePopup();
     loadArticles();
 }
 
-// CHAT STYLE GAUCHE / DROITE
 async function openChatRoom(fId, clientNom, role){
     fournisseurConnecteID = fId;
     let expediteurNom = (role === 'client') ? clientNom : "Fournisseur";
-    
     document.getElementById('popup-content').innerHTML = `
         <span class="close" onclick="closePopup()">×</span>
         <h3 style="margin-bottom:10px;">Chat avec ${clientNom}</h3>
@@ -89,7 +80,6 @@ async function openChatRoom(fId, clientNom, role){
             <input type="text" id="msg-input" placeholder="Ecrire un message...">
             <button onclick="envoyerMessage('${clientNom}', '${expediteurNom}')">➤</button>
         </div>`;
-    
     const refreshing = () => loadMessages(fId, clientNom);
     refreshing();
     if(window.chatInterval) clearInterval(window.chatInterval);
@@ -109,7 +99,7 @@ async function loadMessages(fId, clientNom){
     let box = document.getElementById('chat-box');
     if(box && data){
         box.innerHTML = data.map(m => {
-            const isMe = (m.expediteur !== "Fournisseur"); // On simplifie pour le style
+            const isMe = (m.expediteur !== "Fournisseur");
             return `<div class="msg-bubble ${isMe ? 'msg-client' : 'msg-fournisseur'}">
                 <span class="msg-name">${m.expediteur}</span>
                 ${m.contenu}
@@ -120,6 +110,12 @@ async function loadMessages(fId, clientNom){
 }
 
 async function inscription(){
+    const { data: countData } = await _supabase.from('fournisseurs').select('*');
+    if(countData && countData.length >= 3){
+        alert("Désolé, la limite de 3 fournisseurs est atteinte.");
+        loadFournisseurs();
+        return;
+    }
     let nom = document.getElementById('nom').value;
     let tel = document.getElementById('tel').value;
     if(nom==="" || tel===""){alert("Remplissez Nom et Téléphone");return;}
@@ -128,30 +124,59 @@ async function inscription(){
 }
 
 async function loadFournisseurs(){
-    let list = document.getElementById('liste-fournisseurs'); list.innerHTML='';
+    let list = document.getElementById('liste-fournisseurs'); list.innerHTML='Chargement...';
     const { data } = await _supabase.from('fournisseurs').select('*');
-    
-    // MASQUER LE BOUTON SI 3 FOURNISSEURS OU PLUS
     let btnInscrire = document.querySelector('.btn-inscrire');
     if (data && data.length >= 3) {
-        if (btnInscrire) btnInscrire.style.display = 'none';
+        if (btnInscrire) btnInscrire.style.setProperty('display', 'none', 'important');
     } else {
-        if (btnInscrire) btnInscrire.style.display = 'block';
+        if (btnInscrire) btnInscrire.style.setProperty('display', 'block', 'important');
     }
-
-    if(data) { data.forEach((f)=>{ list.innerHTML += `<div class="fournisseur" onclick="dashboardFournisseur('${f.id}', '${f.nom.replace(/'/g, "\\'")}')"><img><div><h3>${f.nom}</h3><p>Tel: ${f.telephone}</p></div></div>` }) }
+    list.innerHTML='';
+    if(data) {
+        data.forEach((f)=>{
+            list.innerHTML += `<div class="fournisseur" onclick="dashboardFournisseur('${f.id}', '${f.nom.replace(/'/g, "\\'")}')"><img><div><h3>${f.nom}</h3><p>Tel: ${f.telephone}</p></div></div>`
+        })
+    }
 }
 
+// --- MODIFICATION ICI : PROTECTION DU TABLEAU DE BORD ---
 async function dashboardFournisseur(id, nom){
-    fournisseurConnecteID = id;
+    // On demande le numéro de téléphone pour vérifier l'identité
+    let checkTel = prompt("Si vous êtes le fournisseur " + nom + ", entrez votre numéro de téléphone pour accéder à votre tableau de bord. Sinon, appuyez sur Annuler.");
+
+    // On récupère les infos du fournisseur pour vérifier le numéro
+    const { data: fournisseur } = await _supabase.from('fournisseurs').select('*').eq('id', id).single();
+
     document.getElementById('popup').classList.add('active');
-    document.getElementById('popup-content').innerHTML = `<span class="close" onclick="closePopup()">×</span><h3>Bonjour ${nom}</h3><button onclick="openFormArticle()">+ Publier un Article</button><h4 style="margin-top:20px;">Messages reçus</h4><div id="client-list">Chargement...</div>`;
-    const { data: msgs } = await _supabase.from('messages').select('nom_client').eq('fournisseur_id', id);
-    let clientsUnique = [...new Set(msgs?.map(m => m.nom_client))];
-    let listDiv = document.getElementById('client-list');
-    listDiv.innerHTML = (clientsUnique.length === 0) ? "Aucun message" : "";
-    clientsUnique.forEach(client => { listDiv.innerHTML += `<div class="msg-client" style="align-self:flex-start; cursor:pointer; margin-top:10px;" onclick="openChatRoom('${id}', '${client}', 'fournisseur')">Discussion avec ${client}</div>`; });
+    
+    if (checkTel && fournisseur && checkTel === fournisseur.telephone) {
+        // C'EST LE FOURNISSEUR : On affiche TOUT
+        fournisseurConnecteID = id;
+        document.getElementById('popup-content').innerHTML = `
+            <span class="close" onclick="closePopup()">×</span>
+            <h3>Bonjour ${nom}</h3>
+            <button onclick="openFormArticle()">+ Publier un Article</button>
+            <h4 style="margin-top:20px;">Messages reçus</h4>
+            <div id="client-list">Chargement...</div>`;
+            
+        const { data: msgs } = await _supabase.from('messages').select('nom_client').eq('fournisseur_id', id);
+        let clientsUnique = [...new Set(msgs?.map(m => m.nom_client))];
+        let listDiv = document.getElementById('client-list');
+        listDiv.innerHTML = (clientsUnique.length === 0) ? "Aucun message" : "";
+        clientsUnique.forEach(client => { 
+            listDiv.innerHTML += `<div class="msg-client" style="align-self:flex-start; cursor:pointer; margin-top:10px;" onclick="openChatRoom('${id}', '${client}', 'fournisseur')">Discussion avec ${client}</div>`; 
+        });
+    } else {
+        // C'EST UN VISITEUR : On affiche seulement le nom et un bouton de chat
+        document.getElementById('popup-content').innerHTML = `
+            <span class="close" onclick="closePopup()">×</span>
+            <h3>Profil de ${nom}</h3>
+            <p style="margin: 20px 0;">Vous pouvez contacter ce fournisseur via le chat sur le site.</p>
+            <button onclick="clientInitialiseChat('${id}', '${nom}')">💬 Discuter avec lui</button>`;
+    }
 }
+
 function loadCategories(){
     let side = document.getElementById('sidebar-cat'); 
     side.innerHTML='<div onclick="filterCat(\'TOUT\',this)" class="active">TOUT</div>';
