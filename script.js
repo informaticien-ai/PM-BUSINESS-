@@ -17,7 +17,7 @@ async function showPage(id, el){
     if(id==='fournisseurs') loadFournisseurs();
 }
 
-// ARTICLES
+// ARTICLES (AJOUT DU PANIER 🛒)
 async function loadArticles(){
     let grid = document.getElementById('articles-grid'); 
     grid.innerHTML='<p style="text-align:center;width:100%;">Chargement...</p>';
@@ -25,7 +25,15 @@ async function loadArticles(){
     grid.innerHTML='';
     if(articles) {
         articles.forEach((a)=>{
-            grid.innerHTML += `<div class="card" onclick="openPopup('${a.nom.replace(/'/g, "\\'")}','${a.prix}','${a.image_url}')"><img src="${a.image_url || ''}"><h4>${a.nom}</h4><p>${a.prix}</p></div>`
+            grid.innerHTML += `
+            <div class="card" onclick="openPopup('${a.nom.replace(/'/g, "\\'")}','${a.prix}','${a.image_url}')">
+                <img src="${a.image_url || ''}">
+                <h4>${a.nom}</h4>
+                <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin-top:5px;">
+                    <p>${a.prix}</p>
+                    <span onclick="event.stopPropagation(); showPage('message', document.querySelectorAll('footer div')[1])" style="cursor:pointer; font-size:1.3rem;">🛒</span>
+                </div>
+            </div>`
         });
     }
 }
@@ -76,7 +84,7 @@ async function publierArticle(){
     loadArticles();
 }
 
-// CHAT STYLE GAUCHE / DROITE
+// CHAT
 async function openChatRoom(fId, clientNom, role){
     fournisseurConnecteID = fId;
     let expediteurNom = (role === 'client') ? clientNom : "Fournisseur";
@@ -119,31 +127,39 @@ async function loadMessages(fId, clientNom){
     }
 }
 
-// INSCRIPTION
+// INSCRIPTION (AVEC PHOTO FOURNISSEUR)
 async function inscription(){
+    const photoFile = document.getElementById('fourni-photo').files[0];
+    let nom = document.getElementById('nom').value;
+    let tel = document.getElementById('tel').value;
+
+    if(nom==="" || tel==="" || !photoFile){alert("Nom, Téléphone et Photo requis");return;}
+
     const { data: countData } = await _supabase.from('fournisseurs').select('*');
     if(countData && countData.length >= 3){
         alert("Désolé, la limite de 3 fournisseurs est atteinte.");
         return;
     }
 
-    let nom = document.getElementById('nom').value;
-    let tel = document.getElementById('tel').value;
-    if(nom==="" || tel===""){alert("Remplissez Nom et Téléphone");return;}
+    // 1. Upload photo
+    const fileName = "fourni_" + Date.now() + "_" + photoFile.name;
+    const { data: upData } = await _supabase.storage.from('images').upload(fileName, photoFile);
+    const { data: urlData } = _supabase.storage.from('images').getPublicUrl(fileName);
 
-    // .select() permet de récupérer l'ID qui vient d'être créé
-    const { data, error } = await _supabase.from('fournisseurs').insert([{ nom, telephone: tel, email: document.getElementById('email').value, pays: document.getElementById('pays').value }]).select();
+    // 2. Insert
+    const { data, error } = await _supabase.from('fournisseurs').insert([
+        { nom, telephone: tel, email: document.getElementById('email').value, pays: document.getElementById('pays').value, photo_url: urlData.publicUrl }
+    ]).select();
     
     if(!error) { 
-        // ON ENREGISTRE L'ID DANS LE TÉLÉPHONE DU FOURNISSEUR
         localStorage.setItem('mon_id_fournisseur', data[0].id);
-        alert("Inscription réussie ! Vous êtes reconnu comme le propriétaire de ce compte sur ce téléphone."); 
+        alert("Inscription réussie !"); 
         closeForm(); 
         loadFournisseurs(); 
     }
 }
 
-// CHARGER LES FOURNISSEURS (Numéro masqué pour le public)
+// CHARGER LES FOURNISSEURS (AVEC PHOTO)
 async function loadFournisseurs(){
     let list = document.getElementById('liste-fournisseurs'); list.innerHTML='';
     const { data } = await _supabase.from('fournisseurs').select('*');
@@ -157,21 +173,21 @@ async function loadFournisseurs(){
 
     if(data) {
         data.forEach((f)=>{
-            // On n'affiche plus le téléphone ici pour éviter la triche
-            list.innerHTML += `<div class="fournisseur" onclick="dashboardFournisseur('${f.id}', '${f.nom.replace(/'/g, "\\'")}')"><img><div><h3>${f.nom}</h3><p>Vendeur PM Business</p></div></div>`
+            list.innerHTML += `
+            <div class="fournisseur" onclick="dashboardFournisseur('${f.id}', '${f.nom.replace(/'/g, "\\'")}')">
+                <img src="${f.photo_url || ''}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; border:2px solid var(--jaune);">
+                <div><h3>${f.nom}</h3><p>Vendeur PM Business</p></div>
+            </div>`
         })
     }
 }
 
-// DASHBOARD SECURISE : FOURNISSEUR vs PUBLIC
+// DASHBOARD (AVEC BOUTON CONNEXION)
 async function dashboardFournisseur(id, nom){
-    // On vérifie si l'ID stocké dans le téléphone correspond à l'ID du fournisseur cliqué
-    let monIdDansCeTelephone = localStorage.getItem('mon_id_fournisseur');
-
+    let monId = localStorage.getItem('mon_id_fournisseur');
     document.getElementById('popup').classList.add('active');
 
-    if(monIdDansCeTelephone === id) {
-        // C'EST LE FOURNISSEUR PROPRIÉTAIRE : On affiche les boutons privés
+    if(monId === id) {
         fournisseurConnecteID = id;
         document.getElementById('popup-content').innerHTML = `
             <span class="close" onclick="closePopup()">×</span>
@@ -184,15 +200,29 @@ async function dashboardFournisseur(id, nom){
         let clientsUnique = [...new Set(msgs?.map(m => m.nom_client))];
         let listDiv = document.getElementById('client-list');
         listDiv.innerHTML = (clientsUnique.length === 0) ? "Aucun message" : "";
-        clientsUnique.forEach(client => { listDiv.innerHTML += `<div class="msg-client" style="align-self:flex-start; cursor:pointer; margin-top:10px;" onclick="openChatRoom('${id}', '${client}', 'fournisseur')">Discussion avec ${client}</div>`; });
+        clientsUnique.forEach(client => { 
+            listDiv.innerHTML += `<div class="msg-client" style="align-self:flex-start; cursor:pointer; margin-top:10px;" onclick="openChatRoom('${id}', '${client}', 'fournisseur')">Discussion avec ${client}</div>`; 
+        });
     } else {
-        // C'EST LE PUBLIC : On cache les messages et le bouton publier
         document.getElementById('popup-content').innerHTML = `
             <span class="close" onclick="closePopup()">×</span>
             <h3>Vendeur : ${nom}</h3>
-            <p style="margin:20px 0;">Cliquez sur le bouton ci-dessous pour discuter avec ce vendeur.</p>
-            <button onclick="clientInitialiseChat('${id}', '${nom}')">💬 Lui envoyer un message</button>`;
+            <p style="margin:20px 0;">Cliquez ci-dessous pour commander.</p>
+            <button onclick="clientInitialiseChat('${id}', '${nom}')">💬 Lui envoyer un message</button>
+            <hr style="margin:20px 0; opacity:0.1;">
+            <button style="background:#777; font-size:11px; padding:8px;" onclick="connexionFournisseur('${id}')">Accès Propriétaire</button>`;
     }
+}
+
+async function connexionFournisseur(id){
+    let tel = prompt("Entrez votre numéro de téléphone pour vous connecter :");
+    if(!tel) return;
+    const { data: f } = await _supabase.from('fournisseurs').select('*').eq('id', id).single();
+    if(f && f.telephone === tel){
+        localStorage.setItem('mon_id_fournisseur', id);
+        alert("Connexion réussie !");
+        dashboardFournisseur(id, f.nom);
+    } else { alert("Erreur de numéro."); }
 }
 
 function loadCategories(){
@@ -201,6 +231,7 @@ function loadCategories(){
     categories.forEach((c)=>{ side.innerHTML += `<div onclick="filterCat('${c}',this)">${c}</div>`; });
     filterCat("TOUT", side.children[0]);
 }
+
 async function filterCat(cat, el){
     document.querySelectorAll('.sidebar div').forEach(d=>d.classList.remove('active'));
     if(el) el.classList.add('active');
@@ -209,14 +240,26 @@ async function filterCat(cat, el){
     if(cat !== "TOUT") query = query.eq('categorie', cat);
     const { data: filtered } = await query;
     grid.innerHTML='';
-    if(filtered) { filtered.forEach(a=>{ grid.innerHTML += `<div class="card" onclick="openPopup('${a.nom.replace(/'/g, "\\'")}','${a.prix}','${a.image_url}')"><img src="${a.image_url}"><h4>${a.nom}</h4><p>${a.prix}</p></div>` }); }
+    if(filtered) { 
+        filtered.forEach(a=>{ 
+            grid.innerHTML += `
+            <div class="card" onclick="openPopup('${a.nom.replace(/'/g, "\\'")}','${a.prix}','${a.image_url}')">
+                <img src="${a.image_url}">
+                <h4>${a.nom}</h4>
+                <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin-top:5px;">
+                    <p>${a.prix}</p>
+                    <span onclick="event.stopPropagation(); showPage('message', document.querySelectorAll('footer div')[1])" style="cursor:pointer; font-size:1.3rem;">🛒</span>
+                </div>
+            </div>` 
+        }); 
+    }
 }
+
 async function openChatList(){
     document.getElementById('popup').classList.add('active');
-    document.getElementById('popup-content').innerHTML = "<h3>Chargement...</h3>";
     const { data } = await _supabase.from('fournisseurs').select('*');
     let html = '<span class="close" onclick="closePopup()">×</span><h3>Choisir un vendeur</h3>';
-    if(data) { data.forEach((f)=>{ html += `<div class="fournisseur" onclick="clientInitialiseChat('${f.id}', '${f.nom.replace(/'/g, "\\'")}')"><img><div><h3>${f.nom}</h3></div></div>`; }); }
+    if(data) { data.forEach((f)=>{ html += `<div class="fournisseur" onclick="clientInitialiseChat('${f.id}', '${f.nom.replace(/'/g, "\\'")}')"><img src="${f.photo_url || ''}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;"><div><h3>${f.nom}</h3></div></div>`; }); }
     document.getElementById('popup-content').innerHTML = html;
 }
 function clientInitialiseChat(fId, fNom){
