@@ -19,6 +19,7 @@ async function showPage(id, el){
     if(id==='fournisseurs') loadFournisseurs();
 }
 
+// ARTICLES AVEC PANIER 🛒
 async function loadArticles(){
     let grid = document.getElementById('articles-grid'); 
     grid.innerHTML='<p style="text-align:center;width:100%;">Chargement...</p>';
@@ -49,14 +50,15 @@ function closePopup(){
     if(window.chatInterval) clearInterval(window.chatInterval);
 }
 
+// INSCRIPTION (SÉCURISÉE SANS TEL/EMAIL)
 async function inscription(){
     const photoFile = document.getElementById('fourni-photo').files[0];
     const nom = document.getElementById('nom').value;
-    const tel = document.getElementById('tel').value;
     const pays = document.getElementById('pays').value;
+    const code = document.getElementById('code_secret').value;
     const btn = document.querySelector('.popup-content button[onclick="inscription()"]');
 
-    if(!nom || !tel || !photoFile){ alert("Veuillez remplir le nom, le téléphone et choisir une photo."); return; }
+    if(!nom || !code || !photoFile){ alert("Veuillez remplir le nom, le code secret et choisir une photo."); return; }
     btn.innerText = "Patientez..."; btn.disabled = true;
 
     try {
@@ -67,10 +69,14 @@ async function inscription(){
         await _supabase.storage.from('images').upload(fileName, photoFile);
         const { data: urlData } = _supabase.storage.from('images').getPublicUrl(fileName);
 
-        const { data: result, error: insertError } = await _supabase.from('fournisseurs').insert([{ nom, telephone: tel, pays, photo_url: urlData.publicUrl }]).select();
+        const { data: result, error: insertError } = await _supabase.from('fournisseurs').insert([{ 
+            nom, pays, photo_url: urlData.publicUrl, code_secret: code 
+        }]).select();
+        
         if(!insertError) { 
             localStorage.setItem('mon_id_fournisseur', result[0].id);
-            alert("Inscription réussie !"); closeForm(); loadFournisseurs(); 
+            alert("Inscription réussie ! Retenez bien votre code secret."); 
+            closeForm(); loadFournisseurs(); 
         }
     } catch (err) { alert("Erreur : " + err.message); } 
     finally { btn.innerText = "Valider"; btn.disabled = false; }
@@ -81,6 +87,7 @@ async function loadFournisseurs(){
     const { data } = await _supabase.from('fournisseurs').select('*');
     let btnInscrire = document.querySelector('.btn-inscrire');
     if (data && data.length >= 3) { if (btnInscrire) btnInscrire.style.setProperty('display', 'none', 'important'); }
+    list.innerHTML='';
     if(data) {
         data.forEach((f)=>{
             list.innerHTML += `<div class="fournisseur" onclick="dashboardFournisseur('${f.id}', '${f.nom.replace(/'/g, "\\'")}')"><img src="${f.photo_url || ''}" style="width:65px; height:65px; border-radius:50%; object-fit:cover; border:3px solid var(--jaune);"><div><h3>${f.nom}</h3><p>Vendeur PM Business</p></div></div>`
@@ -100,27 +107,26 @@ async function dashboardFournisseur(id, nom){
         listDiv.innerHTML = (clientsUnique.length === 0) ? "Aucun message" : "";
         clientsUnique.forEach(client => { listDiv.innerHTML += `<div class="msg-client" style="cursor:pointer; margin-top:10px;" onclick="openChatRoom('${id}', '${client}', 'fournisseur')">Discussion avec ${client}</div>`; });
     } else {
-        document.getElementById('popup-content').innerHTML = `<span class="close" onclick="closePopup()">×</span><h3>Vendeur : ${nom}</h3><p style="margin:20px 0;">Discutez avec ce vendeur pour passer commande.</p><button onclick="demanderNomClient('${id}', '${nom}')">💬 Lui envoyer un message</button><hr style="margin:20px 0; opacity:0.1;"><button style="background:#777; font-size:11px; padding:8px;" onclick="connexionFournisseur('${id}')">Accès Propriétaire</button>`;
+        document.getElementById('popup-content').innerHTML = `<span class="close" onclick="closePopup()">×</span><h3>Vendeur : ${nom}</h3><p style="margin:20px 0;">Discutez avec ce vendeur pour passer commande.</p><button onclick="demanderNomClient('${id}', '${nom}')">💬 Lui envoyer un message</button><hr style="margin:20px 0; opacity:0.1;"><button style="background:#777; font-size:11px; padding:8px;" onclick="connexionFournisseur('${id}', '${nom}')">Accès Propriétaire</button>`;
     }
 }
 
-// REMPLACE LE PROMPT DE CONNEXION
-async function connexionFournisseur(id){
+// CONNEXION PAR CODE SECRET
+async function connexionFournisseur(id, nom){
     document.getElementById('popup-content').innerHTML = `
         <span class="close" onclick="closePopup()">×</span>
-        <h3>Connexion</h3>
-        <input type="tel" id="confirm-tel" placeholder="Votre numéro de téléphone">
+        <h3>Connexion ${nom}</h3>
+        <input type="password" id="confirm-code" placeholder="Entrez votre code secret">
         <button onclick="verifierConnexion('${id}')">Confirmer</button>`;
 }
 
 async function verifierConnexion(id){
-    let tel = document.getElementById('confirm-tel').value;
+    let code = document.getElementById('confirm-code').value;
     const { data: f } = await _supabase.from('fournisseurs').select('*').eq('id', id).single();
-    if(f && f.telephone === tel){ 
+    if(f && f.code_secret === code){ 
         localStorage.setItem('mon_id_fournisseur', id); 
-        alert("Connecté !"); 
-        dashboardFournisseur(id, f.nom); 
-    } else { alert("Numéro incorrect."); }
+        alert("Connecté !"); dashboardFournisseur(id, f.nom); 
+    } else { alert("Code incorrect."); }
 }
 
 function openFormArticle(){
@@ -150,13 +156,11 @@ async function openChatList(event){
     document.getElementById('popup-content').innerHTML = html;
 }
 
-// REMPLACE LE PROMPT DE NOM CLIENT
 function demanderNomClient(fId, fNom){
     document.getElementById('popup-content').innerHTML = `
         <span class="close" onclick="closePopup()">×</span>
         <h3>Votre Nom</h3>
-        <p>Entrez votre nom pour discuter avec ${fNom} :</p>
-        <input type="text" id="client-pseudo" placeholder="Ex: Jean">
+        <input type="text" id="client-pseudo" placeholder="Votre nom">
         <button onclick="lancerChat('${fId}')">Commencer</button>`;
 }
 
@@ -165,6 +169,7 @@ function lancerChat(fId){
     if(nomC) openChatRoom(fId, nomC, 'client');
 }
 
+// RECHERCHE
 document.querySelector('#search-bar input').addEventListener('input', (e) => {
     let searchVal = e.target.value.toLowerCase();
     let allCards = document.querySelectorAll('.card');
