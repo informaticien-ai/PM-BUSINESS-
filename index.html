@@ -32,25 +32,25 @@
 <div id="articles" class="page active"><div class="container"><h2 class="titre">Articles</h2><div class="grid-3" id="articles-grid"></div></div></div>
 <div id="fournisseurs" class="page"><div class="container"><h2 class="titre">Fournisseurs</h2><button class="btn-inscrire" onclick="openForm()">S'inscrire comme fournisseur</button><div id="liste-fournisseurs"></div></div></div>
 <div id="categories" class="page"><div class="categories"><div class="sidebar" id="sidebar-cat"></div><div class="products"><div class="grid-2" id="cat-products"></div></div></div></div>
-<div id="message" class="page"><div class="container"><h2 class="titre">Message</h2><p style="text-align:center;">Comment souhaitez-vous discuter avec un fournisseur?</p><div class="choix-btn"><a href="https://wa.me/243812345678" target="_blank" class="btn-wa">📱 Par WhatsApp</a><a href="#" onclick="openChatList()" class="btn-site">💬 Sur le site</a></div></div></div>
+<div id="message" class="page"><div class="container"><h2 class="titre">Message</h2><p style="text-align:center;">Comment souhaitez-vous discuter avec un fournisseur?</p><div class="choix-btn"><a href="https://wa.me/243812345678" target="_blank" class="btn-wa">📱 Par WhatsApp</a><a href="#" onclick="openChatList(event)" class="btn-site">💬 Sur le site</a></div></div></div>
 <div id="apropos" class="page"><div class="container"><h2 class="titre">À propos</h2><div style="background:white;padding:20px;border-radius:15px;"><h3>Qui sommes-nous?</h3><p>PM BUSINESS est votre boutique de mode n°1 à Lubumbashi.</p></div></div></div>
 
 <!-- POPUP GENERAL -->
 <div class="popup" id="popup"><div class="popup-content"><span class="close" onclick="closePopup()">X</span><div id="popup-content"></div></div></div>
 
-<!-- POPUP FORMULAIRE INSCRIPTION -->
+<!-- POPUP FORMULAIRE INSCRIPTION (SÉCURISÉ SANS TEL/EMAIL) -->
 <div class="popup" id="form-popup"><div class="popup-content form-popup"><span class="close" onclick="closeForm()">X</span>
     <h3>Inscription Fournisseur</h3>
-    <input type="text" id="nom" placeholder="Nom Complet">
-    <input type="tel" id="tel" placeholder="Numéro Téléphone">
-    <input type="text" id="pays" placeholder="Pays">
+    <input type="text" id="nom" placeholder="Nom Complet ou Boutique">
+    <input type="text" id="pays" placeholder="Ville / Pays">
     
-    <!-- AJOUT DU CHAMP PHOTO -->
+    <!-- Code secret pour remplacer le téléphone -->
+    <input type="password" id="code_secret" placeholder="Créez un Code Secret (ex: 1234)">
+    
     <p style="font-size:12px; margin-top:10px; text-align:left; font-weight:bold;">Photo de profil :</p>
     <input type="file" id="fourni-photo" accept="image/*" style="border:none; background:none; padding:5px;">
     
-    <!-- TEXTE DE CONFIDENTIALITÉ -->
-    <p style="font-size:10px; color:#666; margin:10px 0; line-height:1.2;">Vos données sont privées. En validant, vous acceptez uniquement l'utilisation de vos infos pour la mise en relation sur ce site.</p>
+    <p style="font-size:10px; color:#666; margin:10px 0; line-height:1.2;">Vos données sont privées. Aucune information personnelle (Email/Tel) n'est collectée.</p>
 
     <button onclick="inscription()">Valider</button>
 </div></div>
