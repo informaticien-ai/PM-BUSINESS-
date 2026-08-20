@@ -7,7 +7,17 @@
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-body { background: var(--gris); }
+
+/* --- MODIFICATION ICI : ARRIÈRE-PLAN AVEC LOGO --- */
+body { 
+    background-color: var(--gris);
+    background-image: linear-gradient(rgba(240, 242, 245, 0.9), rgba(240, 242, 245, 0.9)), 
+                      url('logo-fond.jpg');
+    background-attachment: fixed; /* Fixe pour que le logo ne bouge pas au scroll */
+    background-position: center;  /* Centré */
+    background-repeat: no-repeat; /* Pas de répétition */
+    background-size: 300px;       /* Taille du logo en fond */
+}
 
 /* --- HEADER (LOGO GAUCHE, RECHERCHE DROITE) --- */
 header {
